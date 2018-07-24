@@ -3,8 +3,8 @@
 rm(list=ls())
 
 #Set up foldersd  
-data.folder <-  '/home/mikkel/Dropbox/PM-volition/PM-volition data files/'
-out.folder <- '/home/mikkel/Dropbox/PM-volition/Dataanalysis/'
+data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'
+out.folder <- '/home/mikkel/PM-volition/Dataanalysis/'
 setwd(out.folder)
 load(file='cln_data.RData')
 
@@ -14,27 +14,22 @@ library(arm)
 # library("lattice")
 library(brms)
 
-# Prepare data
-
-str(x.data)
-summary(x.data)
-
-x.data.rtclip <- x.data[x.data$rt.ms < 2000 & x.data$rt.ms > 150,] # Remove implausible reaction times: 200 ms < RT < 2000 ms
+# Prepare data (unused)
+str(x.data.rtclip)
+summary(x.data.rtclip)
 
 free.data <- x.data.rtclip[x.data.rtclip$volition=="free",]   # Only free-choice conditions
 free.data.choice <- subset(free.data, choice_shifts >= 1)
 pm.data <- x.data.rtclip[x.data.rtclip$type == "pm",]
 
-save(file='rtData.R',x.data.rtclip)
-
 ############################################################
 ################ CORRECT (all data) ########################
 ############################################################
 library(brms)
-load(file='rtData.R')
 load(file='Workspace.RData')
 
-mhit.mot.3 = brm(score~type*volition + (1|subj) + (1|shape) + (1|color), data = x.data.rtclip, family = bernoulli(), save_all_pars = TRUE)
+mhit.mot.3 = brm(score~type*volition + (1|subj) + (1|shape) + (1|color), data = x.data.rtclip,
+                 family = bernoulli(), save_all_pars = TRUE, iter=20000, warmup=2000)
 mhit.mot.2 = update(mhit.mot.3, formula = ~. - type:volition)
 mhit.mot.1 = update(mhit.mot.2, formula = ~. - volition)
 mhit.mot.0 = update(mhit.mot.1, formula = ~. - type)
@@ -44,17 +39,13 @@ bf.voli<- bayes_factor(mhit.mot.2, mhit.mot.1)
 bf.int <- bayes_factor(mhit.mot.3, mhit.mot.2)
 bf.int0 <- bayes_factor(mhit.mot.3, mhit.mot.1)
 
+# Save models and BF
+setwd(out.folder)
+save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf.type,bf.voli,bf.int,bf.int0)
+# save.image("Workspace.RData")
 
 # TO DO
 # * mean+CI from posterior
-setwd(out.folder)
-save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf.type,bf.voli,bf.int,bf.int0)
-save.image("Workspace.RData")
-
-
-
-
-
 
 ### --------------------------------------------------------------------------------- ###
 ### OLD: Use glmer and compare using BIC (cf. Wagenmakers 2007)

@@ -7,8 +7,8 @@
 rm(list=ls())
 
 #Set up foldersd  
-data.folder <-  '/home/mikkel/Dropbox/PM-volition/PM-volition data files/'      
-out.folder <- '/home/mikkel/Dropbox/PM-volition/Dataanalysis/'
+data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'      
+out.folder <- '/home/mikkel/PM-volition/Dataanalysis/'
 
 setwd(data.folder)
 
