@@ -26,22 +26,25 @@ pm.data <- x.data.rtclip[x.data.rtclip$type == "pm",]
 ################ CORRECT (all data) ########################
 ############################################################
 library(brms)
-load(file='Workspace.RData')
+# load(file='Workspace.RData')
 
 mhit.mot.3 = brm(score~type*volition + (1|subj) + (1|shape) + (1|color), data = x.data.rtclip,
-                 family = bernoulli(), save_all_pars = TRUE, iter=20000, warmup=2000)
-mhit.mot.2 = update(mhit.mot.3, formula = ~. - type:volition)
-mhit.mot.1 = update(mhit.mot.2, formula = ~. - volition)
-mhit.mot.0 = update(mhit.mot.1, formula = ~. - type)
+                 family = bernoulli(), save_all_pars = TRUE, iter=10000, warmup=2000, cores=3)
+mhit.mot.2 = update(mhit.mot.3, formula = ~. - type:volition,
+                    save_all_pars = TRUE, iter=10000, warmup=2000, cores=3)
+mhit.mot.1 = update(mhit.mot.2, formula = ~. - volition,
+                    save_all_pars = TRUE, iter=10000, warmup=2000, cores=3)
+mhit.mot.0 = update(mhit.mot.1, formula = ~. - type,
+                    save_all_pars = TRUE, iter=10000, warmup=2000, cores=3)
 
 bf.type <- bayes_factor(mhit.mot.1, mhit.mot.0)
-bf.voli<- bayes_factor(mhit.mot.2, mhit.mot.1)
-bf.int <- bayes_factor(mhit.mot.3, mhit.mot.2)
-bf.int0 <- bayes_factor(mhit.mot.3, mhit.mot.1)
+bf.voli <- bayes_factor(mhit.mot.2, mhit.mot.1)
+bf.int2 <- bayes_factor(mhit.mot.3, mhit.mot.2)
+bf.int1 <- bayes_factor(mhit.mot.3, mhit.mot.1)
 
 # Save models and BF
 setwd(out.folder)
-save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf.type,bf.voli,bf.int,bf.int0)
+save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf.type,bf.voli,bf.int2,bf.int1)
 # save.image("Workspace.RData")
 
 # TO DO

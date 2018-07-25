@@ -1,8 +1,11 @@
 ### ----------------------------------------------- ###
 ### Summary
-library(ggplot2)
+out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
-load('raw_data.RData')
+load('cln_data.RData')
+source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
+
+library(ggplot2)
 
 ## %-correct //////////////////////////////////////////////////////////
 #pooled % -----------------------------------------------------
@@ -12,13 +15,13 @@ tab.fix <- xtabs(~score+type, data=x.data.rtclip, subset=volition=='fix')
 prop.table(tab.fix,2)
 #sub specific -----------------------------------------------------
 
-tasks <-  c('free.pm', 'free.fil', 'fix.pm', 'fix.fil')
+tasks <-  c('Free (PM) ', 'Free (filler)', 'Fixed (PM)', 'Fixed (filler)')
 
 prob.dat <- data.frame()
 for (jj in levels(x.data.rtclip$subj)){
-  x.sub <- subset(x.data,x.data.rtclip$subj==jj)rt.dat
-  sub.tab.free <- prop.table(xtabs(~score+type,data=x.sub,subset=volition=='free'),2)
-  sub.tab.fix <- prop.table(xtabs(~score+type,data=x.sub,subset=volition=='fix'),2)
+  x.sub <- subset(x.data.rtclip, x.data.rtclip$subj==jj)
+  sub.tab.free <- prop.table(xtabs(~score+type,data=x.sub, subset=volition=='free'),2)
+  sub.tab.fix <- prop.table(xtabs(~score+type,data=x.sub, subset=volition=='fix'),2)
   
   subj <- rep(jj,4)
   dat <- c(sub.tab.free[4],sub.tab.free[2],sub.tab.fix[4],sub.tab.fix[2])
@@ -27,6 +30,7 @@ for (jj in levels(x.data.rtclip$subj)){
   prob.dat <- rbind(prob.dat,SS)
 }
 
+# Plot all individual 
 pct_corrt = ggplot(prob.dat, aes(x=subj,y=dat,fill=tasks))+
   geom_bar(position="dodge",stat="identity")+
   ylab("%-correct")+
@@ -41,16 +45,25 @@ pct_corrt2 = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
   theme_bw()
 ggsave('pct_correct_all2.png',pct_corrt2,device='png',width=6,height=6, units='cm',scale = 3)
 
+# Group level summary
+aggregate(dat~tasks, FUN=median, data=prob.dat)
+aggregate(dat~tasks, FUN=range, data=prob.dat)
 
-p.summary <- aggregate(prob.dat$dat, list(prob.dat$tasks), mean)
+p.summary <- aggregate(prob.dat$dat, list(prob.dat$tasks), median)
 names(p.summary) <- c("Task","mean")
+
 p.summary.sd <- aggregate(prob.dat$dat, list(prob.dat$tasks), sd)
+p.summary.qt <- aggregate(prob.dat$dat, list(prob.dat$tasks), quantile, probs=c(0.025,0.975))
+qts <- p.summary.qt[2]
 
 p.summary$Volition <- rep(c("fix","free"),each=2)
 p.summary$PM.type <- rep(c("fil","pm"),2)
 p.summary$sd <- p.summary.sd$x
 p.summary$se <- p.summary$sd/sqrt(100)
+p.summary$lower = p.summary.qt$x[,1]
+p.summary$upper = p.summary.qt$x[,2]
 
+# Group level bar-and-whiskers plot.
 group_bar_pctCorrt = ggplot(p.summary, aes(x=PM.type,y=mean, fill=Volition))+
   geom_bar(position="dodge",colour="black",stat="identity")+
   geom_errorbar(aes(ymin=mean-2*se,ymax=mean+2*se),position=position_dodge(.9), width=.3)+
@@ -59,14 +72,14 @@ ggsave('pct_correct_group',group_bar_pctCorrt,device='png',width=6,height=6, uni
 
 # THE GOOD %-CORRECT PLOT
 pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
-  geom_point(aes(x=tasks, y=dat, color=subj), position = position_dodge(width = 0.3))+
   # geom_dotplot(binaxis="y",position=position_dodge(.5))+
   geom_crossbar(data=p.summary,aes(x=Task,y=mean, ymin=mean,ymax=mean), width = 0.5)+
-  geom_errorbar(data=p.summary,aes(x=Task,y=mean, ymin=mean-sd, ymax=mean+sd), width=0.2)+
+  geom_errorbar(data=p.summary,aes(x=Task,y=mean, ymin=lower, ymax=upper), width=0.2)+
+  geom_point(aes(x=tasks, y=dat, color=subj), position = position_dodge(width = 0.3))+
   ylab("%-correct")+
   xlab('Task')+
-  labs(title="Performance across conditions")+ guides(fill=F)+
-  theme_bw() + theme(legend.position = "none")
+  labs(title="Performance across conditions", tag="A") + guides(fill=F)+
+  publish_theme + theme(legend.position = "none")
 ggsave('pct_correct_all.png',pct_corrt,device='png',width=6,height=6, units='cm',scale = 3)
 
 plot1 <- ggplot(rt.dat) + 
@@ -80,7 +93,6 @@ plot1 <- ggplot(rt.dat) +
 
 ## RT ///////////////////////////////////////////////////////////
 # pooled rt -----------------------------------------------------
-
 mean.summary <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type),mean)
 sd.summary <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type),sd)
 

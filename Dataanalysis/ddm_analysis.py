@@ -14,7 +14,7 @@ import pickle
 from pymc import Matplot
 
 # %%
-workdir = '/home/mikkel/Dropbox/PM-volition/Dataanalysis'
+workdir = '/home/mikkel/PM-volition/Dataanalysis'
 fname = 'alldata.csv'
 chdir(workdir)
 fpath = op.join(workdir,fname)
@@ -24,12 +24,14 @@ fpath = op.join(workdir,fname)
 data = hddm.load_csv(fpath)
 data = data.rename(columns={'response':'keypress'})
 data = data.rename(columns={'subj':'subj_idx', 'score':'response'})
-#data = hddm.utils.flip_errors(data)        # Only for plots
 
-#fig = plt.figure()
-#ax = fig.add_subplot(111, xlabel='RT', ylabel='count', title='RT distributions')
-#for i, subj_data in data.groupby('subj_idx'):
-#    subj_data.rt.hist(bins=20, histtype='step', ax=ax)
+# %% Plot errors
+data_flip = hddm.utils.flip_errors(data)        # Only for plots
+
+fig = plt.figure()
+ax = fig.add_subplot(111, xlabel='RT', ylabel='count', title='RT distributions')
+for i, subj_data in data_flip.groupby('subj_idx'):
+    subj_data.rt.hist(bins=100, histtype='step', ax=ax)
     
 # %% Intercept only model (just for testing)
 #model = hddm.HDDM(data)

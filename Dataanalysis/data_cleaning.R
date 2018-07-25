@@ -5,8 +5,7 @@
 rm(list=ls())
 
 #Set up foldersd  
-data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'
-out.folder <- '/home/mikkel/PM-volition/Dataanalysis/'
+out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
 load(file='raw_data.RData')
 

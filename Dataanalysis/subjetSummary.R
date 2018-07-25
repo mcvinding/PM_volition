@@ -1,9 +1,8 @@
 ## subject summary - PM-volition
 rm(list=ls())
 
-#Set up foldersd  
-data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'
-out.folder <- '/home/mikkel/PM-volition/Dataanalysis/'
+#Set up folders  
+out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
 load(file='cln_data.RData')
 
