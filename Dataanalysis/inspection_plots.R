@@ -72,24 +72,24 @@ ggsave('pct_correct_group',group_bar_pctCorrt,device='png',width=6,height=6, uni
 
 # THE GOOD %-CORRECT PLOT
 pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
-  # geom_dotplot(binaxis="y",position=position_dodge(.5))+
+  geom_point(aes(x=tasks, y=dat, color=subj), position = position_dodge(width = 0.3))+
   geom_crossbar(data=p.summary,aes(x=Task,y=mean, ymin=mean,ymax=mean), width = 0.5)+
   geom_errorbar(data=p.summary,aes(x=Task,y=mean, ymin=lower, ymax=upper), width=0.2)+
-  geom_point(aes(x=tasks, y=dat, color=subj), position = position_dodge(width = 0.3))+
   ylab("%-correct")+
   xlab('Task')+
-  labs(title="Performance across conditions", tag="A") + guides(fill=F)+
+  labs(title="Performance", tag="B") + guides(fill=F)+
   publish_theme + theme(legend.position = "none")
-ggsave('pct_correct_all.png',pct_corrt,device='png',width=6,height=6, units='cm',scale = 3)
+ggsave('pct_correct_all.png', pct_corrt,
+       device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)
 
-plot1 <- ggplot(rt.dat) + 
-  geom_point(aes(x=tasks, y=RT, color=subj), position = position_dodge(width = 0.3)) +   
-  geom_crossbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean,ymax=mean), width = 0.5) + theme_bw() +
-  geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean-sd, ymax=mean+sd), width=0.2) +
-  # scale_color_manual(values=c("blue","red"))+
-  xlab("Task") +
-  ylab("Reaction time (ms)") + ylim(0, max(rt.dat$RT))+
-  ggtitle("Reaction time")
+# plot1 <- ggplot(rt.dat) + 
+#   geom_point(aes(x=tasks, y=RT, color=subj), position = position_dodge(width = 0.3)) +   
+#   geom_crossbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean,ymax=mean), width = 0.5) + theme_bw() +
+#   geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean-sd, ymax=mean+sd), width=0.2) +
+#   # scale_color_manual(values=c("blue","red"))+
+#   xlab("Task") +
+#   ylab("Reaction time (ms)") + ylim(0, max(rt.dat$RT))+
+#   ggtitle("Reaction time")
 
 ## RT ///////////////////////////////////////////////////////////
 # pooled rt -----------------------------------------------------
@@ -108,26 +108,26 @@ rt_pool+theme_bw()
 ggsave('rt_pool.png',rt_pool,device='png',width=6,height=6, units='cm',scale = 2)
 
 # per subject RT -----------------------------------------------------
-rt.dat <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),mean)
-rt.datse <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),sd)
+rt.dat <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),median)
+rt.dat.se <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),sd)
 
 names(rt.dat) <- c("volition","task","subj","RT")
 rt.dat$sd <- rt.datse$x
-rt.dat$tasks <- paste(rt.dat$volition,rt.dat$task)
+rt.dat$tasks <- factor(paste(rt.dat$volition,rt.dat$task), levels = c("free pm", "free filler", "fix pm", "fix filler"))
+levels(rt.dat$tasks) <- tasks
 
-rt.grouplvl <- aggregate(rt.dat$RT,list(rt.dat$volition,rt.dat$task),mean)
-names(rt.grouplvl) <- c("volition","task","mean")
+rt.grouplvl <- aggregate(rt.dat$RT,list(rt.dat$tasks), mean)
+names(rt.grouplvl) <- c("tasks","mean")
 rt.grouplvl$sd <- aggregate(rt.dat$RT,list(rt.dat$volition,rt.dat$task),sd)$x
 rt.grouplvl$se <- rt.grouplvl$sd/sqrt(10)
-
-rt.grouplvl$tasks <- paste(rt.grouplvl$volition,rt.grouplvl$task)
-
-rt.dat = merge(rt.dat,rt.grouplvl, by = c('volition','task'))
+rt.grouplvl.qt <- aggregate(rt.dat$RT, list(rt.dat$tasks), quantile, probs=c(0.025,0.975))
+rt.grouplvl$lower = rt.grouplvl.qt$x[,1]
+rt.grouplvl$upper = rt.grouplvl.qt$x[,2]
 
 ggplot(x.data.rtclip, aes(x=rt.ms, fill=type))+
   geom_histogram(alpha=.4,position="identity",colour="black")+
   labs(title="RT per sub for PM-task")+
-  facet_wrap(~subj, ncol=5)
+  facet_wrap(~subj, ncol=5)+publish_theme
 ggsave('rt_hist_pmTask.png',device='png',width=10,height=10, units='cm',scale = 2)
 
 
@@ -160,13 +160,14 @@ ggsave('rt_allsub2.png',device='png',width=6,height=6, units='cm',scale = 3)
 plot1 <- ggplot(rt.dat) + 
   geom_point(aes(x=tasks, y=RT, color=subj), position = position_dodge(width = 0.3)) +   
   geom_crossbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean,ymax=mean), width = 0.5) +
-  geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean-sd, ymax=mean+sd), width=0.2) +
+  geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=lower, ymax=upper), width=0.2) +
   # scale_color_manual(values=c("blue","red"))+
   xlab("Task") +
   ylab("Reaction time (ms)") + ylim(0, max(rt.dat$RT))+
   ggtitle("Reaction time")+
-  theme_bw() + theme(legend.position = "none")
-ggsave('rt_allsub2b.png',plot1,device='png',width=6,height=6, units='cm',scale = 3)
+  labs(title="Reaction time", tag="A") + guides(fill=F)+
+  publish_theme + theme(legend.position = "none")
+plot1
 
-
-
+ggsave('rt_allsub2b.png', plot1,
+       device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)

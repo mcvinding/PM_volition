@@ -12,8 +12,9 @@ publish_theme <- theme_bw() +
     axis.line = element_line(size=.7, colour="black"),
     text = element_text(size = 12, family="Helvetica", color="black"),       # Size changes from 10, added color = "black"
     plot.title = element_text(size = 16, face="bold", lineheight = NULL, hjust = 0.5),    # Size changes from 8, removed vjust = 1.5,
+    plot.tag = element_text(size = 14, face="bold"),
     axis.text = element_text(size=12, color="black"),                                 # Size changes from 8, added color = "black"
-    axis.title = element_text(size = 12),                                    # Size changes from 8, vjust = .5
+    axis.title = element_text(size = 12, face="bold"),                                    # Size changes from 8, vjust = .5
         # legend.background=element_rect(linetype=1, size=.2, fill="white", colour=NULL),
     plot.margin = unit(c(1,1.5,1,1),"lines"),
     legend.box="vertical",
