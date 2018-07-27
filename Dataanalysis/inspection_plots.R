@@ -8,13 +8,14 @@ source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
 library(ggplot2)
 
 ## %-correct //////////////////////////////////////////////////////////
-#pooled % -----------------------------------------------------
+#pooled % ---------------------------------------------------------
 tab.free <- xtabs(~score+type, data=x.data.rtclip, subset=volition=='free')
 prop.table(tab.free,2)
 tab.fix <- xtabs(~score+type, data=x.data.rtclip, subset=volition=='fix')
 prop.table(tab.fix,2)
 #sub specific -----------------------------------------------------
 
+### Prepare data
 tasks <-  c('Free (PM) ', 'Free (filler)', 'Fixed (PM)', 'Fixed (filler)')
 
 prob.dat <- data.frame()
@@ -29,21 +30,6 @@ for (jj in levels(x.data.rtclip$subj)){
   
   prob.dat <- rbind(prob.dat,SS)
 }
-
-# Plot all individual 
-pct_corrt = ggplot(prob.dat, aes(x=subj,y=dat,fill=tasks))+
-  geom_bar(position="dodge",stat="identity")+
-  ylab("%-correct")+
-  labs(title="%-correct for each condition between subjects")+
-  theme_bw()
-ggsave('pct_correct_all',pct_corrt,device='png',width=10,height=5, units='cm',scale = 2)
-
-pct_corrt2 = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
-  geom_dotplot(binaxis="y",position=position_dodge(.5))+
-  ylab("%-correct")+
-  labs(title="%-correct for each subject between conditions")+
-  theme_bw()
-ggsave('pct_correct_all2.png',pct_corrt2,device='png',width=6,height=6, units='cm',scale = 3)
 
 # Group level summary
 aggregate(dat~tasks, FUN=median, data=prob.dat)
@@ -63,6 +49,25 @@ p.summary$se <- p.summary$sd/sqrt(100)
 p.summary$lower = p.summary.qt$x[,1]
 p.summary$upper = p.summary.qt$x[,2]
 
+## Summary
+aggregate(dat~tasks, FUN=range, data=prob.dat)
+
+### Plots only for inspection of data
+# Plot all individual 
+pct_corrt = ggplot(prob.dat, aes(x=subj,y=dat,fill=tasks))+
+  geom_bar(position="dodge",stat="identity")+
+  ylab("%-correct")+
+  labs(title="%-correct for each condition between subjects")+
+  theme_bw()
+ggsave('pct_correct_all',pct_corrt,device='png',width=10,height=5, units='cm',scale = 2)
+
+pct_corrt2 = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
+  geom_dotplot(binaxis="y",position=position_dodge(.5))+
+  ylab("%-correct")+
+  labs(title="%-correct for each subject between conditions")+
+  theme_bw()
+ggsave('pct_correct_all2.png',pct_corrt2,device='png',width=6,height=6, units='cm',scale = 3)
+
 # Group level bar-and-whiskers plot.
 group_bar_pctCorrt = ggplot(p.summary, aes(x=PM.type,y=mean, fill=Volition))+
   geom_bar(position="dodge",colour="black",stat="identity")+
@@ -70,7 +75,7 @@ group_bar_pctCorrt = ggplot(p.summary, aes(x=PM.type,y=mean, fill=Volition))+
   labs(title="Group level %-correct (+/- 2se)")
 ggsave('pct_correct_group',group_bar_pctCorrt,device='png',width=6,height=6, units='cm',scale = 3)
 
-# THE GOOD %-CORRECT PLOT
+### THE GOOD %-CORRECT PLOT
 pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
   geom_point(aes(x=tasks, y=dat, color=subj), position = position_dodge(width = 0.3))+
   geom_crossbar(data=p.summary,aes(x=Task,y=mean, ymin=mean,ymax=mean), width = 0.5)+
@@ -81,15 +86,6 @@ pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
   publish_theme + theme(legend.position = "none")
 ggsave('pct_correct_all.png', pct_corrt,
        device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)
-
-# plot1 <- ggplot(rt.dat) + 
-#   geom_point(aes(x=tasks, y=RT, color=subj), position = position_dodge(width = 0.3)) +   
-#   geom_crossbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean,ymax=mean), width = 0.5) + theme_bw() +
-#   geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean-sd, ymax=mean+sd), width=0.2) +
-#   # scale_color_manual(values=c("blue","red"))+
-#   xlab("Task") +
-#   ylab("Reaction time (ms)") + ylim(0, max(rt.dat$RT))+
-#   ggtitle("Reaction time")
 
 ## RT ///////////////////////////////////////////////////////////
 # pooled rt -----------------------------------------------------
@@ -107,12 +103,13 @@ rt_pool <- ggplot(rt.summary, aes(x=PM.type,y=mean, fill=Volition))+
 rt_pool+theme_bw()
 ggsave('rt_pool.png',rt_pool,device='png',width=6,height=6, units='cm',scale = 2)
 
-# per subject RT -----------------------------------------------------
+# ------------------------------------------------------------------
+### Prepare data
 rt.dat <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),median)
 rt.dat.se <- aggregate(x.data.rtclip$rt.ms, list(x.data.rtclip$volition,x.data.rtclip$type,x.data.rtclip$subj),sd)
 
 names(rt.dat) <- c("volition","task","subj","RT")
-rt.dat$sd <- rt.datse$x
+rt.dat$sd <- rt.dat.se$x
 rt.dat$tasks <- factor(paste(rt.dat$volition,rt.dat$task), levels = c("free pm", "free filler", "fix pm", "fix filler"))
 levels(rt.dat$tasks) <- tasks
 
@@ -124,6 +121,7 @@ rt.grouplvl.qt <- aggregate(rt.dat$RT, list(rt.dat$tasks), quantile, probs=c(0.0
 rt.grouplvl$lower = rt.grouplvl.qt$x[,1]
 rt.grouplvl$upper = rt.grouplvl.qt$x[,2]
 
+### Plot only for inspection of data
 ggplot(x.data.rtclip, aes(x=rt.ms, fill=type))+
   geom_histogram(alpha=.4,position="identity",colour="black")+
   labs(title="RT per sub for PM-task")+
@@ -167,7 +165,10 @@ plot1 <- ggplot(rt.dat) +
   ggtitle("Reaction time")+
   labs(title="Reaction time", tag="A") + guides(fill=F)+
   publish_theme + theme(legend.position = "none")
-plot1
-
 ggsave('rt_allsub2b.png', plot1,
        device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)
+
+### Summary
+rt.grouplvl
+aggregate(RT~tasks, FUN=range, dat=rt.dat)
+
