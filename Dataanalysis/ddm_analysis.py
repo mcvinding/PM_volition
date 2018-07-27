@@ -3,7 +3,7 @@
 Analyse PM-volition data by HDDM.
 Note: Run in py 2.7
 """
-import matplotlib
+#import matplotlib
 import hddm
 import os.path as op
 from os import chdir
@@ -17,17 +17,16 @@ from pymc import Matplot
 workdir = '/home/mikkel/PM-volition/Dataanalysis'
 outdir = '/home/mikkel/PM-volition/Datafiles'
 fname = 'alldata.csv'
-chdir(workdir)
-fpath = op.join(workdir,fname)
-import ddm_plot
+#chdir(workdir)
+#import ddm_plot
 chdir(outdir)
 
 # %% Prepare data
-data = hddm.load_csv(fpath)
+data = hddm.load_csv(op.join(workdir,fname))
 data = data.rename(columns={'response':'keypress'})
 data = data.rename(columns={'subj':'subj_idx', 'score':'response'})
 
-# %% Plot errors
+# %% Plot errors (for inspection)
 data_flip = hddm.utils.flip_errors(data)        # Only for plots
 
 fig = plt.figure()
@@ -70,6 +69,13 @@ mod0.find_starting_values()
 mod0.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
 mod0.save(op.join(outdir,'ddf_model0'))
 
+# %% Fit the real model with bias (NB: Takes hours! Does not work!)
+
+#modz = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
+#modz.find_starting_values()
+#modz.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+#modz.save(op.join(outdir,'ddf_modelZ'))
+
 # %% Check convergence
 mod = hddm.load('ddf_model')
 mod.plot_posteriors()
@@ -87,6 +93,9 @@ with open('models.txt','wb') as fb:
     pickle.dump(models,fb)
 
 # %% Summary and plots
+mod = hddm.load(op.join(workdir,'ddf_model'))
+#modz = hddm.load(op.join(outdir,'ddf_modelZ'))
+
 stats = mod.gen_stats()
 mod.print_stats()
 mod.get_group_nodes()
