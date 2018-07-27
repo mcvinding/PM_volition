@@ -15,12 +15,14 @@ from pymc import Matplot
 
 # %%
 workdir = '/home/mikkel/PM-volition/Dataanalysis'
+outdir = '/home/mikkel/PM-volition/Datafiles'
 fname = 'alldata.csv'
 chdir(workdir)
 fpath = op.join(workdir,fname)
+import ddm_plot
+chdir(outdir)
 
 # %% Prepare data
-
 data = hddm.load_csv(fpath)
 data = data.rename(columns={'response':'keypress'})
 data = data.rename(columns={'subj':'subj_idx', 'score':'response'})
@@ -59,14 +61,14 @@ for i, subj_data in data_flip.groupby('subj_idx'):
 
 mod = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition']})
 mod.find_starting_values()
-mod.sample(20000, burn=2000, dbname='traces.db', db='pickle')
-mod.save('ddf_model')
+mod.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+mod.save(op.join(outdir,'ddf_model'))
 
 # %% Make a null-model (not yet run)
 mod0 = hddm.HDDM(data)
 mod0.find_starting_values()
-mod0.sample(20000, burn=2000, dbname='traces0.db', db='pickle')
-mod0.save('ddf_model0')
+mod0.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
+mod0.save(op.join(outdir,'ddf_model0'))
 
 # %% Check convergence
 mod = hddm.load('ddf_model')
@@ -76,7 +78,7 @@ models = []
 for i in range(5):
     m = hddm.HDDM(data,depends_on ={'v': ['type','volition'], 'a':['type','volition']})
     m.find_starting_values()
-    m.sample(2000, burn=200)
+    m.sample(10000, burn=2000)
     models.append(m)
 
 gelman_rubin(models)
@@ -85,8 +87,12 @@ with open('models.txt','wb') as fb:
     pickle.dump(models,fb)
 
 # %% Summary and plots
-mod.gen_stats()
+stats = mod.gen_stats()
 mod.print_stats()
+mod.get_group_nodes()
+
+# Posterior checks
+mod.plot_posterior_predictive()
 
 v_fixPM, v_freePM, v_fixFil, v_freeFil  = mod.nodes_db.node[['v(pm.fix)', 'v(pm.free)','v(filler.fix)','v(filler.free)']]
 hddm.analyze.plot_posterior_nodes([v_fixPM, v_freePM, v_fixFil, v_freeFil], lb=1.4, ub=3.0)
