@@ -7,7 +7,7 @@
 rm(list=ls())
 
 #Set up foldersd  
-data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'      
+data.folder <-  '/home/mikkel/PM-volition/PM-volition data files/'      #Raw datafiles
 out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 
 setwd(data.folder)
@@ -27,8 +27,6 @@ for (ii in 1:length(all_files)) {
   x.data <- rbind(x.data,sub.data)  
 }
 
-setwd(out.folder)
-
 # Fix factors
 x.data$volition <- as.factor(x.data$volition)
 x.data$rt.ms <- x.data$rt*1000
@@ -45,4 +43,8 @@ x.data$pm_shape <- factor(x.data$response)
 x.data$log.rt <- log(x.data$rt)
 # x.data$meanChoiceTime <- x.data$choice_rt/x.data$choice_shifts
 
-save(x.data,file='raw_data.RData')
+# Save
+setwd(out.folder)
+
+save(x.data,file='raw_data.RData')      # Save in R format for further analysis
+write.csv(x.data,file='raw_data.csv')   # Save in csv format for sharing

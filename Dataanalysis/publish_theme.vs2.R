@@ -1,5 +1,6 @@
 # Make a theme
 # Last edited 2018-04-21 by MCV
+library(ggplot2)
 
 publish_theme <- theme_bw() +
   theme(

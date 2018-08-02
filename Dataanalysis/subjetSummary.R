@@ -4,7 +4,7 @@ rm(list=ls())
 #Set up folders  
 out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
-load(file='cln_data.RData')
+load(file='raw_data.RData')
 
 age.data <- aggregate(age~subj,FUN=mean,data=x.data.rtclip)
 sex.data <- aggregate(gender~subj,FUN=unique,data=x.data.rtclip)
