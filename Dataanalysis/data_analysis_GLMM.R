@@ -3,30 +3,25 @@
 rm(list=ls())
 
 #Set up foldersd  
-out.folder <- '/home/mikkel/PM-volition/Dataanalysis/'
+out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
 load(file='cln_data.RData')
 
 #Libraries
-# library(lme4)
-# library(arm)
-# library("lattice")
 library(brms)
 library(ggplot2)
-source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
 
-# Prepare data (unused)
-str(x.data.rtclip)
-summary(x.data.rtclip)
-
-free.data <- x.data.rtclip[x.data.rtclip$volition=="free",]   # Only free-choice conditions
-free.data.choice <- subset(free.data, choice_shifts >= 1)
-pm.data <- x.data.rtclip[x.data.rtclip$type == "pm",]
+# # Prepare data (unused)
+# str(x.data.rtclip)
+# summary(x.data.rtclip)
+# 
+# free.data <- x.data.rtclip[x.data.rtclip$volition=="free",]   # Only free-choice conditions
+# free.data.choice <- subset(free.data, choice_shifts >= 1)
+# pm.data <- x.data.rtclip[x.data.rtclip$type == "pm",]
 
 ############################################################
 ################ CORRECT (all data) ####   ####################
 ############################################################
-library(brms)
 # load(file='Workspace.RData')
 
 mhit.mot.3 = brm(score~type*volition + (1|subj) + (1|shape) + (1|color), data = x.data.rtclip,
