@@ -33,41 +33,28 @@ fig = plt.figure()
 ax = fig.add_subplot(111, xlabel='RT', ylabel='count', title='RT distributions')
 for i, subj_data in data_flip.groupby('subj_idx'):
     subj_data.rt.hist(bins=100, histtype='step', ax=ax)
-    
-# %% Intercept only model (just for testing)
-#model = hddm.HDDM(data)
-#model.find_starting_values()
-#model.sample(100, burn=20, dbname='traces.db', db='pickle')
-#
-#model.plot_posteriors()
-#model.gen_stats()
-#
-#model.save('model0')
-#
-#model = hddm.load('model0')
-#
-## %% Also just a test
-#pyl
-#
-#model2 = hddm.HDDM(data, depends_on ={'v':'type'})
-#model2.find_starting_values()
-#model2.sample(1000, burn=20,  dbname='traces.db', db='pickle')
-#
-#model2.plot_posteriors_conditions()
-#model.gen_stats()
 
 # %% Fit the real model (NB: Takes hours!)
-
 mod = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition']})
 mod.find_starting_values()
 mod.sample(10000, burn=2000, dbname='traces.db', db='pickle')
 mod.save(op.join(outdir,'ddf_model'))
 
-# %% Make a null-model (not yet run)
+# %% Make a null-model and models with only one parameter between groups
 mod0 = hddm.HDDM(data)
 mod0.find_starting_values()
 mod0.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
 mod0.save(op.join(outdir,'ddf_model0'))
+
+modv = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':'type'})
+modv.find_starting_values()
+modv.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+modv.save(op.join(outdir,'ddf_modelV'))
+
+moda = hddm.HDDM(data, depends_on ={'v':'type','a':['type','volition']})
+moda.find_starting_values()
+moda.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+moda.save(op.join(outdir,'ddf_modelA'))
 
 # %% Fit the real model with bias (NB: Takes hours! Does not work!)
 
@@ -96,6 +83,10 @@ with open('models.txt','wb') as fb:
 mod = hddm.load(op.join(workdir,'ddf_model'))
 #modz = hddm.load(op.join(outdir,'ddf_modelZ'))
 
+# Compare DIC
+
+
+# Get statistics from posterior
 stats = mod.gen_stats()
 mod.print_stats()
 mod.get_group_nodes()

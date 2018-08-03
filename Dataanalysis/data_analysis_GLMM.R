@@ -10,6 +10,7 @@ load(file='cln_data.RData')
 #Libraries
 library(brms)
 library(ggplot2)
+source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
 
 # # Prepare data (unused)
 # str(x.data.rtclip)
@@ -38,6 +39,8 @@ print(mhit.mot.2)
 print(mhit.mot.1)
 print(mhit.mot.0)
 
+hdi
+
 # Bayes Factors
 bf.type <- bayes_factor(mhit.mot.1, mhit.mot.0)
 bf.voli <- bayes_factor(mhit.mot.2, mhit.mot.1)
@@ -53,6 +56,7 @@ save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf
 stanplot(mhit.mot.3, type="dens",pars = "^b_")+publish_theme
 stanplot(mhit.mot.3, type="dens_overlay")+publish_theme
 stanplot(mhit.mot.3, type="nuts_divergence")
+
 
 ### --------------------------------------------------------------------------------- ###
 ### OLD: Use glmer and compare using BIC (cf. Wagenmakers 2007)
