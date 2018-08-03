@@ -10,15 +10,12 @@ load(file='cln_data.RData')
 #Libraries
 library(brms)
 library(ggplot2)
+library(mcmcse)
+library(sjstats)
 source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
 
-# # Prepare data (unused)
-# str(x.data.rtclip)
-# summary(x.data.rtclip)
-# 
-# free.data <- x.data.rtclip[x.data.rtclip$volition=="free",]   # Only free-choice conditions
-# free.data.choice <- subset(free.data, choice_shifts >= 1)
-# pm.data <- x.data.rtclip[x.data.rtclip$type == "pm",]
+# Get estimate of N-samples needed
+minESS(p = 42)
 
 ############################################################
 ################ CORRECT (all data) ####   ####################
@@ -39,7 +36,9 @@ print(mhit.mot.2)
 print(mhit.mot.1)
 print(mhit.mot.0)
 
-hdi
+# get HDI
+hdi(mhit.mot.3, prob = c(.5, .89, .95), type="fixed")
+# equi_test(mhit.mot.3, out = "plot", type = "fixed", rope=c(-.20,.20))  #ROPE makes no sense here
 
 # Bayes Factors
 bf.type <- bayes_factor(mhit.mot.1, mhit.mot.0)
@@ -53,9 +52,10 @@ save(file='hit_analysis.RData', mhit.mot.3, mhit.mot.2, mhit.mot.1,mhit.mot.0,bf
 # save.image("Workspace.RData")
 
 # Plot
+stanplot(mhit.mot.3, type="areas",pars = "^b_")+publish_theme
 stanplot(mhit.mot.3, type="dens",pars = "^b_")+publish_theme
 stanplot(mhit.mot.3, type="dens_overlay")+publish_theme
-stanplot(mhit.mot.3, type="nuts_divergence")
+# stanplot(mhit.mot.3, type="nuts_divergence") 
 
 
 ### --------------------------------------------------------------------------------- ###
