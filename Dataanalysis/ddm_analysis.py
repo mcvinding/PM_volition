@@ -9,6 +9,7 @@ import os.path as op
 from os import chdir
 import os.path as op
 import pandas as pd
+import pymc as pc  
 import matplotlib.pyplot as plt
 from kabuki.analyze import gelman_rubin
 import pickle
@@ -63,22 +64,25 @@ moda.sample(10000, burn=2000, dbname='traces.db', db='pickle')
 moda.save(op.join(outdir,'ddf_modelA'))
 
 # %% Fit the real model with bias (NB: Takes hours! Does not work!)
-
 #modz = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
 #modz.find_starting_values()
 #modz.sample(10000, burn=2000, dbname='traces.db', db='pickle')
 #modz.save(op.join(outdir,'ddf_modelZ'))
 
-# %% Check convergence
+# %% Diagnostics and check convergence
 mod = hddm.load('ddf_model')
 mod.plot_posteriors()
 
+# Get R-hat
 models = []
-for i in range(5):
+for i in range(3):
     m = hddm.HDDM(data,depends_on ={'v': ['type','volition'], 'a':['type','volition']})
     m.find_starting_values()
     m.sample(10000, burn=2000)
     models.append(m)
+models.append(mod)
+
+gelman_rubin(models) 
 
 with open(op.join(outdir,'models.pkl'),'wb') as fb:
     pickle.dump(models,fb)
@@ -86,13 +90,12 @@ with open(op.join(outdir,'models.pkl'),'wb') as fb:
 #with open(op.join(outdir,'models.pkl'), 'rb') as f:
 #        pickle.load(f)  
 
-gelman_rubin(models) 
 
 # %% Summary and plots
 mod = hddm.load(op.join(outdir,'ddf_model'))
 #modz = hddm.load(op.join(outdir,'ddf_modelZ'))
 
-# Compare DIC
+# Compare DIC (not useful)
 print 'DIC full model = ', mod.dic
 print 'DIC null model = ', mod0.dic
 print 'DIC type model = ', modz.dic
@@ -114,7 +117,7 @@ hddm.analyze.plot_posterior_nodes([v_fixPM, v_freePM, v_fixFil, v_freeFil], lb=1
 plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{v}$')
-plt.legend(['Fixed: PM-cue','Free: PM-cue','Fixed: Filler','Free: Filler'], fontsize=8, loc=0, edgecolor='white')
+plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
 plt.savefig('v_post')
 
 a_fixPM, a_freePM, a_fixFil, a_freeFil  = mod.nodes_db.node[['a(pm.fix)', 'a(pm.free)','a(filler.fix)','a(filler.free)']]
@@ -122,7 +125,7 @@ hddm.analyze.plot_posterior_nodes([a_fixPM, a_freePM, a_fixFil, a_freeFil], lb=1
 plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{a}$')
-plt.legend(['Fixed: PM-cue','Free: PM-cue','Fixed: Filler','Free: Filler'], fontsize=8, loc=0, edgecolor='white')
+plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
 plt.savefig('a_post')
 
 # Comparison of posteriors
@@ -132,30 +135,40 @@ print "PM: P_a(Free < Fix) = ", (a_fixPM.trace() < a_freePM.trace()).mean()
 print "Fil: P_a(Free < Fix) = ", (a_fixFil.trace() < a_freeFil.trace()).mean()
 
 
-#%% HDI
-import pymc as pc  
-print(pc.utils.hpd(mod.get_traces()['a(filler.fix)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['a(filler.free)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['a(pm.fix)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['a(pm.free)'], 0.05))
+#%% HPD (67%, 89%, 97%)
+hpdi = 0.67
+print('a(filler.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(filler.fix)'], 1-hpdi)))
+print('a(filler.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(filler.free)'], 1-hpdi)))
+print('a(pm.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(pm.fix)'], 1-hpdi)))
+print('a(pm.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(pm.free)'], 1-hpdi)))
 
-print(pc.utils.hpd(mod.get_traces()['v(filler.fix)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['v(filler.free)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['v(pm.fix)'], 0.05))
-print(pc.utils.hpd(mod.get_traces()['v(pm.free)'], 0.05))
+print('v(filler.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(filler.fix)'], 1-hpdi)))
+print('v(filler.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(filler.free)'], 1-hpdi)))
+print('v(pm.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(pm.fix)'], 1-hpdi)))
+print('v(pm.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(pm.free)'], 1-hpdi)))
 
+#%% Plot "null" model posterior denisty
 
+# Plot posteriors
+v_PM, v_Fil  = modz.nodes_db.node[['v(pm)','v(filler)']]
+hddm.analyze.plot_posterior_nodes([v_PM, v_Fil] ) #, lb=1.6, ub=3.3)
+plt.gca().get_lines()[0].set_color("olive")
+plt.gca().get_lines()[1].set_color("purple")
+plt.ylabel('Density')
+plt.xlabel('Value')
+plt.title('Posterior: $\it{v}$')
+plt.legend(['PM-cue','Filler'], fontsize=8, loc=0, edgecolor='white')
+plt.savefig('v_postz')
 
-
-
-
-
-
-
-
-
-
-
+a_PM, a_Fil  = modz.nodes_db.node[['a(pm)','a(filler)']]
+hddm.analyze.plot_posterior_nodes([a_PM, a_Fil], lb=1.0, ub=2.5)
+plt.gca().get_lines()[0].set_color("olive")
+plt.gca().get_lines()[1].set_color("purple")
+plt.ylabel('Density')
+plt.xlabel('Value')
+plt.title('Posterior: $\it{a}$')
+plt.legend(['PM-cue','Filler'], fontsize=8, loc=0, edgecolor='white')
+plt.savefig('a_postz')
 
 
 

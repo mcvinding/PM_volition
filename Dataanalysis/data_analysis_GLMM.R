@@ -37,7 +37,7 @@ print(mhit.mot.1)
 print(mhit.mot.0)
 
 # get HDI
-hdi(mhit.mot.3, prob = c(.5, .89, .95), type="fixed")
+hdi(mhit.mot.3, prob = c(0.67, 0.89, 0.97), type="fixed")
 # equi_test(mhit.mot.3, out = "plot", type = "fixed", rope=c(-.20,.20))  #ROPE makes no sense here
 
 # Bayes Factors
