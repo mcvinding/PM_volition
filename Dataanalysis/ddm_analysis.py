@@ -90,7 +90,6 @@ with open(op.join(outdir,'models.pkl'),'wb') as fb:
 #with open(op.join(outdir,'models.pkl'), 'rb') as f:
 #        pickle.load(f)  
 
-
 # %% Summary and plots
 mod = hddm.load(op.join(outdir,'ddf_model'))
 #modz = hddm.load(op.join(outdir,'ddf_modelZ'))
@@ -129,10 +128,10 @@ plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], font
 plt.savefig('a_post')
 
 # Comparison of posteriors
-print "PM: P_v(Free < Fix) = ", (v_fixPM.trace() < v_freePM.trace()).mean()
-print "Fil: P_v(Free < Fix) = ", (v_fixFil.trace() < v_freeFil.trace()).mean()
-print "PM: P_a(Free < Fix) = ", (a_fixPM.trace() < a_freePM.trace()).mean()
-print "Fil: P_a(Free < Fix) = ", (a_fixFil.trace() < a_freeFil.trace()).mean()
+print "PM: P_v(Free < Fix) = ", (v_fixPM.trace() > v_freePM.trace()).mean()
+print "Fil: P_v(Free < Fix) = ", (v_fixFil.trace() > v_freeFil.trace()).mean()
+print "PM: P_a(Free < Fix) = ", (a_fixPM.trace() > a_freePM.trace()).mean()
+print "Fil: P_a(Free < Fix) = ", (a_fixFil.trace() > a_freeFil.trace()).mean()
 
 
 #%% HPD (67%, 89%, 97%)
