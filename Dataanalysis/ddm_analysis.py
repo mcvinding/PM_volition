@@ -7,7 +7,6 @@ Note: Run in py 2.7
 import hddm
 import os.path as op
 from os import chdir
-import os.path as op
 import pandas as pd
 import pymc as pc  
 import matplotlib.pyplot as plt
@@ -43,24 +42,28 @@ mod.sample(10000, burn=2000, dbname='traces.db', db='pickle')
 mod.save(op.join(outdir,'ddf_model'))
 
 # %% Make a null-model and models with only one parameter between groups
-mod0 = hddm.HDDM(data)
+#Null model
+mod0 = hddm.HDDM(data) 
 mod0.find_starting_values()
 mod0.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
 mod0.save(op.join(outdir,'ddf_model0'))
 
+#Zero model
 modz = hddm.HDDM(data, depends_on ={'v': 'type', 'a':'type'})
 modz.find_starting_values()
-modz.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
+modz.sample(10000, burn=2000, dbname='tracesZ.db', db='pickle')
 modz.save(op.join(outdir,'ddf_modelZ'))
 
+#Only V model
 modv = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':'type'})
 modv.find_starting_values()
-modv.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+modv.sample(10000, burn=2000, dbname='tracesV.db', db='pickle')
 modv.save(op.join(outdir,'ddf_modelV'))
 
+#Only A model
 moda = hddm.HDDM(data, depends_on ={'v':'type','a':['type','volition']})
 moda.find_starting_values()
-moda.sample(10000, burn=2000, dbname='traces.db', db='pickle')
+moda.sample(10000, burn=2000, dbname='tracesA.db', db='pickle')
 moda.save(op.join(outdir,'ddf_modelA'))
 
 # %% Fit the real model with bias (NB: Takes hours! Does not work!)
@@ -73,12 +76,12 @@ moda.save(op.join(outdir,'ddf_modelA'))
 mod = hddm.load('ddf_model')
 mod.plot_posteriors()
 
-# Get R-hat
+# Get R-hat 
 models = []
 for i in range(3):
     m = hddm.HDDM(data,depends_on ={'v': ['type','volition'], 'a':['type','volition']})
     m.find_starting_values()
-    m.sample(10000, burn=2000)
+    m.sample(10000, burn=2000, dbname='traces'+str(i)+'.db')
     models.append(m)
 models.append(mod)
 
@@ -91,7 +94,7 @@ with open(op.join(outdir,'models.pkl'),'wb') as fb:
 #        pickle.load(f)  
 
 # %% Summary and plots
-mod = hddm.load(op.join(outdir,'ddf_model'))
+mod = hddm.load(op.join(outdir,'ddf_modelV'))
 #modz = hddm.load(op.join(outdir,'ddf_modelZ'))
 
 # Compare DIC (not useful)
@@ -117,7 +120,7 @@ plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{v}$')
 plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-plt.savefig('v_post')
+#plt.savefig('v_post')
 
 a_fixPM, a_freePM, a_fixFil, a_freeFil  = mod.nodes_db.node[['a(pm.fix)', 'a(pm.free)','a(filler.fix)','a(filler.free)']]
 hddm.analyze.plot_posterior_nodes([a_fixPM, a_freePM, a_fixFil, a_freeFil], lb=1.0, ub=2.5)
@@ -125,7 +128,7 @@ plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{a}$')
 plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-plt.savefig('a_post')
+#plt.savefig('a_post')
 
 # Comparison of posteriors
 print "PM: P_v(Free < Fix) = ", (v_fixPM.trace() > v_freePM.trace()).mean()
@@ -168,6 +171,4 @@ plt.xlabel('Value')
 plt.title('Posterior: $\it{a}$')
 plt.legend(['PM-cue','Filler'], fontsize=8, loc=0, edgecolor='white')
 plt.savefig('a_postz')
-
-
 
