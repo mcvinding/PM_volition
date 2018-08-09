@@ -38,33 +38,33 @@ for i, subj_data in data_flip.groupby('subj_idx'):
 # %% Fit the real model (NB: Takes hours!)
 mod = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition']})
 mod.find_starting_values()
-mod.sample(10000, burn=2000, dbname='traces.db', db='pickle')
-mod.save(op.join(outdir,'ddf_model'))
+mod.sample(20000, burn=2000, dbname='traces.db', db='pickle')
+mod.save(op.join(outdir,'ddm_model'))
 
 # %% Make a null-model and models with only one parameter between groups
 #Null model
 mod0 = hddm.HDDM(data) 
 mod0.find_starting_values()
-mod0.sample(10000, burn=2000, dbname='traces0.db', db='pickle')
-mod0.save(op.join(outdir,'ddf_model0'))
+mod0.sample(20000, burn=2000, dbname='traces0.db', db='pickle')
+mod0.save(op.join(outdir,'ddm_model0'))
 
 #Zero model
 modz = hddm.HDDM(data, depends_on ={'v': 'type', 'a':'type'})
 modz.find_starting_values()
-modz.sample(10000, burn=2000, dbname='tracesZ.db', db='pickle')
-modz.save(op.join(outdir,'ddf_modelZ'))
+modz.sample(20000, burn=2000, dbname='tracesZ.db', db='pickle')
+modz.save(op.join(outdir,'ddm_modelZ'))
 
 #Only V model
 modv = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':'type'})
 modv.find_starting_values()
-modv.sample(10000, burn=2000, dbname='tracesV.db', db='pickle')
-modv.save(op.join(outdir,'ddf_modelV'))
+modv.sample(20000, burn=2000, dbname='tracesV.db', db='pickle')
+modv.save(op.join(outdir,'ddm_modelV'))
 
 #Only A model
 moda = hddm.HDDM(data, depends_on ={'v':'type','a':['type','volition']})
 moda.find_starting_values()
-moda.sample(10000, burn=2000, dbname='tracesA.db', db='pickle')
-moda.save(op.join(outdir,'ddf_modelA'))
+moda.sample(20000, burn=2000, dbname='tracesA.db', db='pickle')
+moda.save(op.join(outdir,'ddm_modelA'))
 
 # %% Fit the real model with bias (NB: Takes hours! Does not work!)
 #modz = hddm.HDDM(data, depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
@@ -73,7 +73,12 @@ moda.save(op.join(outdir,'ddf_modelA'))
 #modz.save(op.join(outdir,'ddf_modelZ'))
 
 # %% Diagnostics and check convergence
-mod = hddm.load('ddf_model')
+chdir(outdir) #Must be in folder to load databases
+
+mod = hddm.load(op.join(outdir, 'ddm_model'))
+#moda = hddm.load(op.join(outdir,'ddf_modelA'))
+#mod0 = hddm.load(op.join(outdir,'ddf_model0'))
+
 mod.plot_posteriors()
 
 # Get R-hat 
@@ -81,7 +86,7 @@ models = []
 for i in range(3):
     m = hddm.HDDM(data,depends_on ={'v': ['type','volition'], 'a':['type','volition']})
     m.find_starting_values()
-    m.sample(10000, burn=2000, dbname='traces'+str(i)+'.db')
+    m.sample(20000, burn=2000, dbname='traces'+str(i)+'.db', db='pickle')
     models.append(m)
 models.append(mod)
 
@@ -94,7 +99,7 @@ with open(op.join(outdir,'models.pkl'),'wb') as fb:
 #        pickle.load(f)  
 
 # %% Summary and plots
-mod = hddm.load(op.join(outdir,'ddf_modelV'))
+mod = hddm.load(op.join(outdir,'ddm_model'))
 #modz = hddm.load(op.join(outdir,'ddf_modelZ'))
 
 # Compare DIC (not useful)
@@ -120,7 +125,7 @@ plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{v}$')
 plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-#plt.savefig('v_post')
+plt.savefig('v_post')
 
 a_fixPM, a_freePM, a_fixFil, a_freeFil  = mod.nodes_db.node[['a(pm.fix)', 'a(pm.free)','a(filler.fix)','a(filler.free)']]
 hddm.analyze.plot_posterior_nodes([a_fixPM, a_freePM, a_fixFil, a_freeFil], lb=1.0, ub=2.5)
@@ -128,7 +133,7 @@ plt.ylabel('Density')
 plt.xlabel('Value')
 plt.title('Posterior: $\it{a}$')
 plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-#plt.savefig('a_post')
+plt.savefig('a_post')
 
 # Comparison of posteriors
 print "PM: P_v(Free < Fix) = ", (v_fixPM.trace() > v_freePM.trace()).mean()
@@ -136,9 +141,8 @@ print "Fil: P_v(Free < Fix) = ", (v_fixFil.trace() > v_freeFil.trace()).mean()
 print "PM: P_a(Free < Fix) = ", (a_fixPM.trace() > a_freePM.trace()).mean()
 print "Fil: P_a(Free < Fix) = ", (a_fixFil.trace() > a_freeFil.trace()).mean()
 
-
 #%% HPD (67%, 89%, 97%)
-hpdi = 0.67
+hpdi = 0.97
 print('a(filler.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(filler.fix)'], 1-hpdi)))
 print('a(filler.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(filler.free)'], 1-hpdi)))
 print('a(pm.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['a(pm.fix)'], 1-hpdi)))
@@ -148,6 +152,8 @@ print('v(filler.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(fille
 print('v(filler.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(filler.free)'], 1-hpdi)))
 print('v(pm.fix) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(pm.fix)'], 1-hpdi)))
 print('v(pm.free) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['v(pm.free)'], 1-hpdi)))
+
+print('t(intercept) %s HPD: %s' % (hpdi, pc.utils.hpd(mod.get_traces()['t'], 1-hpdi)))
 
 #%% Plot "null" model posterior denisty
 
