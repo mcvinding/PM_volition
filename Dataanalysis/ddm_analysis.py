@@ -43,9 +43,9 @@ mod.save(op.join(outdir,'ddm_model'))
 
 # %% Make a null-model and models with only one parameter between groups
 #Null model
-mod0 = hddm.HDDM(data) 
+mod0 = hddm.HDDM(data)
 mod0.find_starting_values()
-mod0.sample(20000, burn=2000, dbname='traces0.db', db='pickle')
+mod0.sample(20000, burn=2000, dbname='tracesN.db', db='pickle')
 mod0.save(op.join(outdir,'ddm_model0'))
 
 #Zero model
@@ -75,7 +75,7 @@ moda.save(op.join(outdir,'ddm_modelA'))
 # %% Diagnostics and check convergence
 chdir(outdir) #Must be in folder to load databases
 
-mod = hddm.load(op.join(outdir, 'ddm_model'))
+#mod = hddm.load(op.join(outdir, 'ddm_model'))
 #moda = hddm.load(op.join(outdir,'ddf_modelA'))
 #mod0 = hddm.load(op.join(outdir,'ddf_model0'))
 
@@ -96,7 +96,7 @@ with open(op.join(outdir,'models.pkl'),'wb') as fb:
     pickle.dump(models,fb)
     
 #with open(op.join(outdir,'models.pkl'), 'rb') as f:
-#        pickle.load(f)  
+#    models = pickle.load(f)  
 
 # %% Summary and plots
 mod = hddm.load(op.join(outdir,'ddm_model'))
@@ -115,7 +115,7 @@ mod.print_stats()
 mod.get_group_nodes()
 
 # Posterior checks
-#mod.plot_posterior_predictive()
+mod.plot_posterior_predictive()
 mod.plot_posterior_quantiles()
 
 # Plot posteriors
