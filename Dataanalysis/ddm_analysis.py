@@ -15,7 +15,7 @@ import pickle
 from pymc import Matplot
 
 # %%
-workdir = '/home/mikkel/PM-volition/Dataanalysis'
+#workdir = '/home/mikkel/PM-volition/Dataanalysis'
 outdir = '/home/mikkel/PM-volition/Datafiles'
 fname = 'alldata.csv'
 #chdir(workdir)
@@ -23,7 +23,7 @@ fname = 'alldata.csv'
 chdir(outdir)
 
 # %% Prepare data
-data = hddm.load_csv(op.join(workdir,fname))
+data = hddm.load_csv(op.join(outdir,fname))
 data = data.rename(columns={'response':'keypress'})
 data = data.rename(columns={'subj':'subj_idx', 'score':'response'})
 

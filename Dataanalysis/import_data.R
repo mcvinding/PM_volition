@@ -43,6 +43,9 @@ x.data$pm_shape <- factor(x.data$response)
 x.data$log.rt <- log(x.data$rt)
 # x.data$meanChoiceTime <- x.data$choice_rt/x.data$choice_shifts
 
+# Remove identifier
+x.data <- within(x.data, rm(subject, org.filename))
+
 # Save
 setwd(out.folder)
 
