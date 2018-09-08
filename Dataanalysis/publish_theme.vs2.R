@@ -12,7 +12,7 @@ publish_theme <- theme_bw() +
     panel.background = element_blank(),
     axis.line = element_line(size=.7, colour="black"),
     text = element_text(size = 12, family="Helvetica", color="black"),       # Size changes from 10, added color = "black"
-    plot.title = element_text(size = 16, face="bold", lineheight = NULL, hjust = 0.5),    # Size changes from 8, removed vjust = 1.5,
+    plot.title = element_text(size = 20, face="bold", lineheight = NULL, hjust = 0.5),    # Size changes from 8, removed vjust = 1.5,
     plot.tag = element_text(size = 14, face="bold"),
     axis.text = element_text(size=12, color="black"),                                 # Size changes from 8, added color = "black"
     axis.title = element_text(size = 12, face="bold"),                                    # Size changes from 8, vjust = .5

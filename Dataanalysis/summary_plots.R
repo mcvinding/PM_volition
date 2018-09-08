@@ -81,7 +81,7 @@ pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat,fill=subj))+
   labs(title="Performance", tag="B") + guides(fill=F)+
   publish_theme + theme(legend.position = "none")
 ggsave('pct_correct_all.png', pct_corrt,
-       device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)
+       device='png',width=4,height=3, units='cm', dpi = 600, scale = 3.5)
 
 ## RT ///////////////////////////////////////////////////////////
 # # pooled rt (not used)
@@ -156,11 +156,11 @@ plot1 <- ggplot(rt.dat) +
   geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=lower, ymax=upper), width=0.2) +
   # scale_color_manual(values=c("blue","red"))+
   xlab("Task") +
-  ylab("Reaction time (ms)") + ylim(0, max(rt.dat$RT))+
+  ylab("Reaction time (ms)") + ylim(0, 900)+
   ggtitle("Reaction time")+
   labs(title="Reaction time", tag="A") + guides(fill=F)+
   publish_theme + theme(legend.position = "none")
-ggsave('rt_allsub2b.png', plot1,
-       device='png',width=5,height=3, units='cm', dpi = 600, scale = 4)
+ggsave('rt_allsub.png', plot1,
+       device='png',width=4,height=3, units='cm', dpi = 600, scale = 3.5)
 
 # END
