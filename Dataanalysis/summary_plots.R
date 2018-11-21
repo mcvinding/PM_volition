@@ -3,7 +3,7 @@
 
 out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
-load('cln_data.RData')
+load('cln_data2.RData')
 source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
 
 library(ggplot2)
@@ -150,7 +150,7 @@ rt.grouplvl$upper = rt.grouplvl.qt$x[,2]
 # ggsave('rt_allsub2.png',device='png',width=6,height=6, units='cm',scale = 3)
 
 # THE GOOD REACTION TIME PLOT
-plot1 <- ggplot(rt.dat) + 
+rt_plt <- ggplot(rt.dat) + 
   geom_point(aes(x=tasks, y=RT, color=subj), position = position_dodge(width = 0.3)) +   
   geom_crossbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=mean,ymax=mean), width = 0.5) +
   geom_errorbar(data=rt.grouplvl,aes(x=tasks,y=mean, ymin=lower, ymax=upper), width=0.2) +
@@ -160,7 +160,7 @@ plot1 <- ggplot(rt.dat) +
   ggtitle("Reaction time")+
   labs(title="Reaction time", tag="A") + guides(fill=F)+
   publish_theme + theme(legend.position = "none")
-ggsave('rt_allsub.png', plot1,
+ggsave('rt_allsub.png', rt_plt,
        device='png',width=4,height=3, units='cm', dpi = 600, scale = 3.5)
 
 # END

@@ -18,8 +18,7 @@ ntrials$orig <- 0
 ntrials$good <- 0
 
 # # Remove (pre-set)
-# x.data$valid.RT <- x.data$rt.ms < 1500 & x.data$rt.ms > 150
-# x.data$valid.choice_shifts <- x.data$choice_shifts >= 1 | x.data$volition =="fix"
+x.data$valid.RT <- x.data$rt.ms < 2000 & x.data$rt.ms > 150
 
 # # Remove (quantiles)
 # x.data$valid.qt <- logical(1)
@@ -30,11 +29,11 @@ ntrials$good <- 0
 #   x.data$valid.qt[x.data$subject==sub] <- good
 # }
 
-# Remove (log-trans +/- 2sd; Ratcliff, 1993) USING THIS
+# Remove (log-trans +/- 2sd; Ratcliff, 1993)
 x.data$valid.sd <- logical(1)
 for (sub in unique(x.data$subj)) {
   temp <- x.data$log.rt[x.data$subj==sub]
-  cut <- c(mean(temp)-2*sd(temp), mean(temp)+2*sd(temp))
+  cut <- c(mean(temp)-2*sd(temp), mean(temp)+3*sd(temp))
   good <- temp > cut[1] & temp < cut[2]
   x.data$valid.sd[x.data$subj==sub] <- good
   
@@ -43,9 +42,11 @@ for (sub in unique(x.data$subj)) {
 }
 
 summary(ntrials)
+summary(x.data)
 
 # Remove outliers
-x.data.rtclip <- x.data[x.data$valid.sd == 1,] # Remove outliers
+# x.data.rtclip <- x.data[x.data$valid.sd == 1,] # Remove outliers (log-trans)
+x.data.rtclip <- x.data[x.data$valid.RT == 1,] # Remove outliers (RT)
 
 ### --------------------------------------------------------------------- ###
 ### Get summary of reaction time and %-correct (before removing bad subject)
@@ -119,10 +120,10 @@ aggregate(rt.dat$RT, list(rt.dat$tasks), sd)
 
 ### -------------------------------SAVE--------------------------------- ###
 # Save
-save(x.data.rtclip,file='cln_data.RData')
+save(x.data.rtclip,file='cln_data2.RData')
 
 # Export data for HDDM in Python (export to csv)
-out.name <- paste0(out.folder,'alldata.csv')
+out.name <- paste0(out.folder,'alldata2.csv')
 write.csv(x.data.rtclip,file=out.name)
 
 # END
