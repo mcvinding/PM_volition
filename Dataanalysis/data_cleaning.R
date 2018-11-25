@@ -1,6 +1,7 @@
 # ----------------------------------------------------------- #
-#PM-volition dataanalysis data-cleaning. Get summaries:
+# PM-volition dataanalysis data-cleaning. Get summaries:
 # * N-trial summary
+# * Subject performance
 # ----------------------------------------------------------- #
 rm(list=ls())
 
@@ -19,15 +20,6 @@ ntrials$good <- 0
 
 # # Remove (pre-set)
 x.data$valid.RT <- x.data$rt.ms < 2000 & x.data$rt.ms > 150
-
-# # Remove (quantiles)
-# x.data$valid.qt <- logical(1)
-# for (sub in unique(x.data$subject)) {
-#   temp <- x.data$rt.ms[x.data$subject==sub]
-#   qnt <- quantile(temp,c(0.025,0.975))
-#   good <- temp > qnt[1] & temp < qnt[2]
-#   x.data$valid.qt[x.data$subject==sub] <- good
-# }
 
 # Remove (log-trans +/- 2sd; Ratcliff, 1993)
 x.data$valid.sd <- logical(1)
