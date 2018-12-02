@@ -38,7 +38,7 @@ def get_hpdi(node, hpdi=0.97):
 
     
 def plot_posterior_nodes2(nodes, bins=100, lb=None, ub=None, shade=1):
-    plt.figure()
+    plt.figure(figsize=(6,4))
     if lb is None:
         lb = min([min(node.trace()[:]) for node in nodes])
     if ub is None:
@@ -53,7 +53,7 @@ def plot_posterior_nodes2(nodes, bins=100, lb=None, ub=None, shade=1):
         dens._compute_covariance()
 
         c = cmap(i)
-        plt.axvline(np.median(node), ls='--', color=c,alpha=0.8)
+#        plt.axvline(np.median(node), ls='--', color=c,alpha=0.8)
         plt.plot(xs, dens(xs), label=node.__name__, lw=2,color=c)
         if shade:
             plt.fill_between(xs,dens(xs),0, alpha=0.3,color=c)
@@ -62,7 +62,7 @@ def plot_posterior_nodes2(nodes, bins=100, lb=None, ub=None, shade=1):
     leg.get_frame().set_alpha(0.5)
     
 
-def plot_posterior_diff(diff, bins=100, lb=None, ub=None, shade=1):
+def plot_posterior_diff(diff, bins=100, lb=None, ub=None, shade=True):
     plt.figure(figsize=(4,4))
     if lb is None:
         lx = min(diff)
