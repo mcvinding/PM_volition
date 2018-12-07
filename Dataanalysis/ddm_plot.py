@@ -3,8 +3,7 @@
 """
 Plot an example figure of DDM
 (plot functions from by https://sammosummo.github.io/2018/01/23/ddm-figure/)
-Created on Fri Jul 27 14:08:10 2018
-@author: mikkel
+Created on Fri Jul 27 14:08:10 2018. @author: mikkel
 """
 import hddm
 import numpy as np
@@ -33,7 +32,6 @@ def delabel(ax):
     ax.xaxis.set_ticks([])
     ax.yaxis.set_ticks([])
 
-
 def kde(ax, x, mx, c):
     """Plot a KDE for reaction times.
     """
@@ -55,7 +53,6 @@ def kde(ax, x, mx, c):
     delabel(ax)
 
     return my
-
 
 def traces(ax, n, mx, **params):
     """Draw example of diffusions.
@@ -86,16 +83,13 @@ def traces(ax, n, mx, **params):
             ax.plot(x, y, c='C0', zorder=-12, alpha=.5)
 
         if idx2 < idx1:
-
             y[idx2:] = np.nan
             ax.plot(x, y, c='C3', zorder=-11, alpha=.5)
 
         ax.set_ylim(0, params['a'])
         ax.set_xlim(0, mx)
         delabel(ax)
-        plt.axvline()
-
-
+        plt.axvline(color='black', ls='--')
 
 def ddmfig(**params):
     """Draw a DDM plot with the given parameter values.
@@ -110,30 +104,35 @@ def ddmfig(**params):
     # traces
     ax = plt.subplot(gs[1])
     traces(ax, ntraces, mx, **params)
-
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
     # data for kdes
     df, _ = hddm.generate.gen_rand_data(params, size=size)
 
     # top KDE
     ax = plt.subplot(gs[0])
     my = kde(ax, df[df.response == 1].rt.values, mx, 'C0')
-
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(True)
+    ax.spines['left'].set_visible(False)
+    
     # bottom KDE
     ax = plt.subplot(gs[2])
     kde(ax, df[df.response == 0].rt.values, mx, 'C3')
     ax.set_ylim(0, my * 1.05)
     ax.invert_yaxis()
-
+    ax.spines['top'].set_visible(True)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
     # remove whitespace around fig
     plt.tight_layout(0)
 
 #%% PLOT
-    
 np.random.seed(666)
-#ddmfig(v=1.5, a=1.5, t=0.2, z=0.5)
 ddmfig(v=0.82, a=2.0, t=0.3, z=0.5)                     #Paramters chosen for astetic purposes (not realted to actual model)
 plt.savefig(op.join(outdir,'ddm_fig.png'), dpi=600)
-
-
-#params = dict(v=1.5, a=1.0, t=0.2, z=0.5)
 
