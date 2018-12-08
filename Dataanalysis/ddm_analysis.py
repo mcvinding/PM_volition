@@ -7,14 +7,11 @@ import sys
 import hddm
 import os.path as op
 from os import chdir
-#import pandas as pd
-#import pymc as pc  
-#import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from kabuki.analyze import gelman_rubin
 import pickle
-#from pymc import Matplot
-#from scipy.stats import gaussian_kde
 
 workdir = '/home/mikkel/PM-volition/Dataanalysis'
 outdir = '/home/mikkel/PM-volition/Datafiles'
@@ -113,21 +110,18 @@ t = mod.nodes_db.node['t']
 
 # %% Statistics
 # Get P and generate difference distribtions (plots only for inspection)
-P, a_PMdiff = pm.get_posteriorP(a_fixPM,a_freePM, plot=0)
-P, v_PMdiff = pm.get_posteriorP(v_fixPM,v_freePM, plot=0)
-#P, z_PMdiff = pm.get_posteriorP(z_fixPM,z_freePM, plot=1)
+P = pm.get_posteriorP(a_fixPM,a_freePM, plot=0)
+P = pm.get_posteriorP(v_fixPM,v_freePM, plot=0)
 
-P, a_Fildiff = pm.get_posteriorP(a_fixFil,a_freeFil, plot=1)
-P, v_Fildiff = pm.get_posteriorP(v_fixFil,v_freeFil, plot=0)
-#P, z_Fildiff = pm.get_posteriorP(z_fixFil,z_freeFil, plot=0)
+P = pm.get_posteriorP(a_fixFil,a_freeFil, plot=1)
+P = pm.get_posteriorP(v_fixFil,v_freeFil, plot=0)
 
 P = pm.get_posteriorP(v_fixPM,v_fixFil, plot=1)
 P = pm.get_posteriorP(v_freePM,v_freeFil, plot=1)
 P = pm.get_posteriorP(a_fixPM,a_fixFil, plot=1)
 P = pm.get_posteriorP(a_freePM,a_freeFil, plot=1)
-#P = pm.get_posteriorP(z_fixPM,z_fixFil, plot=1)
-#P = pm.get_posteriorP(z_freePM,z_freeFil, plot=1)
-P, z_diff = pm.get_posteriorP(z_PM,z_Fil, plot=1)
+
+P = pm.get_posteriorP(z_PM,z_Fil, plot=1)
 
 # HPDI
 hpdi = 0.97
@@ -142,81 +136,7 @@ bnd = pm.get_hpdi(v_freePM,hpdi)
 bnd = pm.get_hpdi(v_fixFil,hpdi)
 bnd = pm.get_hpdi(v_freeFil,hpdi)
 
-#bnd = pm.get_hpdi(z_fixPM,hpdi)
-#bnd = pm.get_hpdi(z_freePM,hpdi)
-#bnd = pm.get_hpdi(z_fixFil,hpdi)
-#bnd = pm.get_hpdi(z_freeFil,hpdi)
-
 bnd = pm.get_hpdi(z_PM,hpdi)
 bnd = pm.get_hpdi(z_Fil,hpdi)
 
 bnd = pm.get_hpdi(t,hpdi)
-
-# %% Plots
-# Posterior plots
-dpi=600
-
-# v
-pm.plot_posterior_nodes2([v_fixPM, v_freePM, v_fixFil, v_freeFil],lb=2.0, ub=4.0,shade=False)
-plt.ylim(-0.05*5,5)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Value',fontsize=12)
-plt.title('Drift rate ($\it{v}$)',fontsize=14)
-plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-plt.tight_layout()
-plt.savefig(op.join(outdir,'v_post2'),dpi=dpi)
-
-# a
-pm.plot_posterior_nodes2([a_fixPM, a_freePM, a_fixFil, a_freeFil],lb=1.2, ub=2.6,shade=False)
-plt.ylim(-0.05*10,10)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Value',fontsize=12)
-plt.title('Decision threshold ($\it{a}$)',fontsize=14)
-plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
-plt.tight_layout()
-plt.savefig(op.join(outdir,'a_post2'),dpi=dpi)
-
-# z
-pm.plot_posterior_nodes2([z_PM, z_Fil], lb=0.1, ub=0.6,shade=False)
-plt.ylim(-0.05*60,60)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Value',fontsize=12)
-plt.title('Bias ($\it{z}$)', fontsize=14)
-plt.legend(['PM-cue','Filler'], fontsize=8, loc=0, edgecolor='white')
-plt.tight_layout()
-plt.savefig(op.join(outdir,'z_post'),dpi=dpi)
-
-# t
-pm.plot_posterior_nodes2([t], lb=0.1, ub=0.5, shade=False)
-plt.ylim(-0.05*50,50)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Value',fontsize=12)
-plt.title('Non-decision time ($\it{t}$)',fontsize=14)
-plt.legend(['t'], fontsize=8, loc=0, edgecolor='white')
-plt.tight_layout()
-plt.savefig(op.join(outdir,'t_post'),dpi=dpi)
-
-# Posterior differences
-pm.plot_posterior_diff(v_PMdiff,lb=-1, ub=1)
-plt.ylim(-0.05*3.5,3.5)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Difference',fontsize=12)
-plt.title('Drift rate ($\it{Fixed}$ - $\it{Free}$)',fontsize=14)
-plt.tight_layout()
-plt.savefig(op.join(outdir,'v_PMdiff'),dpi=dpi)
-
-pm.plot_posterior_diff(a_PMdiff,lb=-0.5, ub=0.5)
-plt.ylim(-0.05*7,7)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Difference',fontsize=12)
-plt.title('Decision threshold ($\it{Fixed}$ - $\it{Free}$)',fontsize=14)
-plt.tight_layout()
-plt.savefig(op.join(outdir,'a_PMdiff'),dpi=dpi)
-
-pm.plot_posterior_diff(z_diff)
-plt.ylim(-0.05*45,45)
-plt.ylabel('Density',fontsize=12)
-plt.xlabel('Difference',fontsize=12)
-plt.title('Biaz ($\it{PM}$ - $\it{Filler}$)',fontsize=14)
-plt.tight_layout()
-plt.savefig(op.join(outdir,'z_diff'),dpi=dpi)
