@@ -1,16 +1,26 @@
 # Volition in Prospective Memory
 
-The repository contains scripts for data analysis, the experimental paradigm, and data files for our behavioural study on the effect of volition in prospective memory.
+The repository contains scripts for data analysis, the experimental paradigm, and data files for our behavioural study on the effect of volition in prospective memory. Please read this document about what you find in this folder and permission on how to use the content.
 
 For more information about the study please see our forthcoming paper:
 
-**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2018). Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions. [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)**
+**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2018). *Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions*. PsyArXiv.org, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)**
+
+## Content
+
+The folder *Dataanlysis* contains script in *R* and *Python* to analyse data exactly as described in our paper. The main anlysis used the [*HDDM*](http://ski.clps.brown.edu/hddm_docs/) package for Python (2.7).
+
+The folder *Datafiles* contains a .csv file with the data collected in the study in anonymized form.
+
+The folder *Paradigm* contains scripts for running the behavioural task described in our paper using _PsychoPy_  ([http://www.psychopy.org/](http://www.psychopy.org/)).
+
+The file _pm-volition demo.ogv_ is a short video illustrating the behavioural task.
 
 ## Permission
 
 All data analysis scripts are freely available for use and redistribution. If you want to use the experimental paradigm or data files you must agree to, and follow the following conditions:
 
-1. When using the experimental paradigm or data files you must refer to the publication (TBA).
+1. When using the experimental paradigm or data files you must refer to the publication (*Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2018). Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions. PsyArXiv.org, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)*, or later versions).
 
 2. Comply with all relevant rules and regulations imposed by my institution and my government. This may mean that you need your research to be approved or declared exempt by a committee that oversees research on human subjects, e.g. by a Institutional Review Board or Ethics Committee.
 
