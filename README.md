@@ -4,15 +4,15 @@ The repository contains scripts for data analysis, the experimental paradigm, an
 
 For more information about the study please see our forthcoming paper:
 
-**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2018). *Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions*. PsyArXiv.org, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)**
+**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2018). *Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions*. PsyArXiv, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)**
 
 ## Content
 
-The folder *Dataanlysis* contains script in *R* and *Python* to analyse data exactly as described in our paper. The main anlysis used the [*HDDM*](http://ski.clps.brown.edu/hddm_docs/) package for Python (2.7).
+The folder *Dataanlysis* contains script in *R* and *Python* to analyse data exactly as described in our paper. The main anlysis used the [HDDM](http://ski.clps.brown.edu/hddm_docs/) package for Python (2.7).
 
 The folder *Datafiles* contains a .csv file with the data collected in the study in anonymized form.
 
-The folder *Paradigm* contains scripts for running the behavioural task described in our paper using _PsychoPy_  ([http://www.psychopy.org/](http://www.psychopy.org/)).
+The folder *Paradigm* contains scripts for running the behavioural task described in our paper using PsychoPy  ([http://www.psychopy.org/](http://www.psychopy.org/)).
 
 The file _pm-volition demo.ogv_ is a short video illustrating the behavioural task.
 
