@@ -17,7 +17,7 @@ def get_posteriorP(x,y,plot=0):
     if P > 0.5:
         P = 1-P        
     P = P*2     #Two-tailed        
-    print ": v P(x-y = 0) = ", P
+    print("P(x-y = 0) = ", P)
     if plot:
         plot_posterior_diff(diff)        
     return P, diff

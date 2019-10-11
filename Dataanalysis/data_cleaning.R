@@ -7,31 +7,39 @@ rm(list=ls())
 
 #Set up foldersd  
 out.folder <- '/home/mikkel/PM-volition/Datafiles/'
+out.folder <- 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Datafiles'
 setwd(out.folder)
 load(file='raw_data.RData')
 
+x.data <- read.csv("raw_data.csv", sep=",",header=T)
+x.data$subj <- as.factor(x.data$subj)
+
 x.data <- subset(x.data, x.data$practice==F)  # Remove practice trials
-# x.data$meanChoiceTime <- x.data$choice_rt/x.data$choice_shifts
 
 ## Removing outlines on subject by subject basis
 ntrials <- data.frame(sub=unique(x.data$subj))
 ntrials$orig <- 0
 ntrials$good <- 0
 
-# # Remove (pre-set)
-x.data$valid.RT <- x.data$rt.ms < 2000 & x.data$rt.ms > 150
+# # Remove (pre-set curoff)
+x.data$valid.RT <- x.data$rt.ms < 2500 & x.data$rt.ms > 150
 
-# Remove (log-trans +/- 2sd; Ratcliff, 1993)
-x.data$valid.sd <- logical(1)
 for (sub in unique(x.data$subj)) {
-  temp <- x.data$log.rt[x.data$subj==sub]
-  cut <- c(mean(temp)-2*sd(temp), mean(temp)+3*sd(temp))
-  good <- temp > cut[1] & temp < cut[2]
-  x.data$valid.sd[x.data$subj==sub] <- good
-  
-  ntrials$orig[ntrials$sub==sub] <- length(temp)
-  ntrials$good[ntrials$sub==sub] <- sum(good)
+  ntrials$orig[ntrials$sub==sub] <- length(x.data$rt.ms[x.data$subj==sub])
+  ntrials$good[ntrials$sub==sub] <- sum(x.data$valid.sd[x.data$subj==sub])
 }
+
+# # Remove (log-trans +/- 2sd; Ratcliff, 1993)
+# x.data$valid.sd <- logical(1)
+# for (sub in unique(x.data$subj)) {
+#   temp <- x.data$log.rt[x.data$subj==sub]
+#   cut <- c(mean(temp)-2*sd(temp), mean(temp)+3*sd(temp))
+#   good <- temp > cut[1] & temp < cut[2]
+#   x.data$valid.sd[x.data$subj==sub] <- good
+# 
+#   ntrials$orig[ntrials$sub==sub] <- length(temp)
+#   ntrials$good[ntrials$sub==sub] <- sum(good)
+# }
 
 summary(ntrials)
 summary(x.data)
@@ -109,13 +117,18 @@ aggregate(rt.dat$RT, list(rt.dat$tasks), range)
 aggregate(rt.dat$RT, list(rt.dat$tasks), mean)
 aggregate(rt.dat$RT, list(rt.dat$tasks), sd)
 
+# Get PM trials only
+PM.data <- subset(x.data.rtclip, type=="pm")
 
 ### -------------------------------SAVE--------------------------------- ###
 # Save
-save(x.data.rtclip,file='cln_data2.RData')
+save(x.data.rtclip, file='cln_data2.RData')
+save(PM.data, file='PM_data.RData')
 
 # Export data for HDDM in Python (export to csv)
-out.name <- paste0(out.folder,'alldata2.csv')
-write.csv(x.data.rtclip,file=out.name)
+out.name <- paste0(out.folder,'\\alldata2.csv')
+write.csv(x.data.rtclip, file=out.name)
+out.name2 <- paste0(out.folder,'\\PM_data.csv')
+write.csv(PM.data, file=out.name2)
 
 # END
