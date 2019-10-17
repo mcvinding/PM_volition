@@ -129,43 +129,50 @@ t_fixPM, t_freePM, t_fixFil, t_freeFil  = mod.nodes_db.node[['t(pm.fix)', 't(pm.
 
 # %% Statistics
 # Get P and generate difference distribtions (plots only for inspection)
-P = pm.get_posteriorP(a_fixPM, a_freePM, plot=1)
-P = pm.get_posteriorP(v_fixPM, v_freePM, plot=1)
-P = pm.get_posteriorP(z_fixPM, z_freePM, plot=1)
-P = pm.get_posteriorP(t_fixPM, t_freePM, plot=1)
 
-P = pm.get_posteriorP(a_fixFil, a_freeFil, plot=1)
-P = pm.get_posteriorP(v_fixFil, v_freeFil, plot=1)
-P = pm.get_posteriorP(z_fixFil, z_freeFil, plot=1)
-P = pm.get_posteriorP(t_fixFil, t_freeFil, plot=1)
+# PM trials: Fix vs Free
+P = pm.get_posteriorP(a_fixPM, a_freePM, plot=0)
+P = pm.get_posteriorP(v_fixPM, v_freePM, plot=0)
+P = pm.get_posteriorP(z_fixPM, z_freePM, plot=0)
+P = pm.get_posteriorP(t_fixPM, t_freePM, plot=0)
 
-P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=1)
-P = pm.get_posteriorP(v_freePM, v_freeFil, plot=1)
-P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=1)
-P = pm.get_posteriorP(a_freePM, a_freeFil, plot=1)
+# Filler trials: Fix vs Free
+P = pm.get_posteriorP(a_fixFil, a_freeFil, plot=0)
+P = pm.get_posteriorP(v_fixFil, v_freeFil, plot=0)
+P = pm.get_posteriorP(z_fixFil, z_freeFil, plot=0)
+P = pm.get_posteriorP(t_fixFil, t_freeFil, plot=0)
 
-P = pm.get_posteriorP(a_freePM, a_freeFil, plot=1)
-P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=1)
+# Fixed: PM vs. Filler
+P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=0)
+P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=0)
+P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=0)
+P = pm.get_posteriorP(t_fixPM, t_fixFil, plot=0)
 
-# HPDI
+# Free: PM vs. filler
+P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=0)
+P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=0)
+P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=0)
+P = pm.get_posteriorP(t_fixPM, t_fixFil, plot=0)
+
+# Get parameters and HPDI
 hpdi = 0.97
 
-bnd = pm.get_hpdi(a_fixPM,hpdi)
-bnd = pm.get_hpdi(a_freePM,hpdi)
-bnd = pm.get_hpdi(a_fixFil,hpdi)
-bnd = pm.get_hpdi(a_freeFil,hpdi)
+bnd = pm.get_hpdi(a_fixPM, hpdi)
+bnd = pm.get_hpdi(a_freePM, hpdi)
+bnd = pm.get_hpdi(a_fixFil, hpdi)
+bnd = pm.get_hpdi(a_freeFil, hpdi)
 
-bnd = pm.get_hpdi(v_fixPM,hpdi)
-bnd = pm.get_hpdi(v_freePM,hpdi)
-bnd = pm.get_hpdi(v_fixFil,hpdi)
-bnd = pm.get_hpdi(v_freeFil,hpdi)
+bnd = pm.get_hpdi(v_fixPM, hpdi)
+bnd = pm.get_hpdi(v_freePM, hpdi)
+bnd = pm.get_hpdi(v_fixFil, hpdi)
+bnd = pm.get_hpdi(v_freeFil, hpdi)
 
-bnd = pm.get_hpdi(z_fixPM,hpdi)
-bnd = pm.get_hpdi(z_freePM,hpdi)
-bnd = pm.get_hpdi(z_fixFil,hpdi)
-bnd = pm.get_hpdi(z_freeFil,hpdi)
+bnd = pm.get_hpdi(z_fixPM, hpdi)
+bnd = pm.get_hpdi(z_freePM, hpdi)
+bnd = pm.get_hpdi(z_fixFil, hpdi)
+bnd = pm.get_hpdi(z_freeFil, hpdi)
 
-bnd = pm.get_hpdi(t_fixPM,hpdi)
-bnd = pm.get_hpdi(t_freePM,hpdi)
-bnd = pm.get_hpdi(t_fixFil,hpdi)
-bnd = pm.get_hpdi(t_freeFil,hpdi)
+bnd = pm.get_hpdi(t_fixPM, hpdi)
+bnd = pm.get_hpdi(t_freePM, hpdi)
+bnd = pm.get_hpdi(t_fixFil, hpdi)
+bnd = pm.get_hpdi(t_freeFil, hpdi)
