@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Analyse PM-volition data by HDDM.
-Note: Run in py 2.7
+@author: mcvinding
 """
 import sys
 import hddm

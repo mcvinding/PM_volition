@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 25 09:47:59 2018
-@author: mikkel
+Created on Sun Nov 25 09:47:59 2018.
+@author: mcvinding
 """
 import matplotlib.pyplot as plt
 import numpy as np

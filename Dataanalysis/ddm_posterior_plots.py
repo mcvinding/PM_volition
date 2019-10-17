@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Plot posterior od DDM
-Created on Sat Dec  8 11:50:04 2018. @author: mikkel
+Plot posterior od DDM. Created on Sat Dec  8 11:50:04 2018.
+@author: mcvinding
 """
 import matplotlib
 #matplotlib.use('Agg')
@@ -21,8 +21,8 @@ import PM_volition_utilfun as pm # plot_posterior_diff, plot_posterior_nodes2, g
 chdir(outdir)                   #Must be in folder to load databases
 mod = hddm.load(op.join(outdir, 'ddm_model22'))
 
-f = open(op.join(outdir,"ddm_model22"),"rb")
-mod = pickle.load(f)
+#f = open(op.join(outdir,"ddm_model22"),"rb")
+#mod = pickle.load(f)
 
 # %% Generate posteriors
 v_fixPM, v_freePM, v_fixFil, v_freeFil  = mod.nodes_db.node[['v(pm.fix)', 'v(pm.free)','v(filler.fix)','v(filler.free)']]
@@ -53,8 +53,8 @@ plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], font
 plt.savefig(op.join(outdir,'v_post2'),dpi=dpi)
 
 # a
-pm.plot_posterior_nodes2([a_fixPM, a_freePM, a_fixFil, a_freeFil],lb=1.2, ub=2.6,shade=False)
-plt.ylim(-0.05*10,10)
+pm.plot_posterior_nodes2([a_fixPM, a_freePM, a_fixFil, a_freeFil],lb=1.3, ub=2.0,shade=False)
+plt.ylim(-0.05*12,12)
 plt.ylabel('Density',fontsize=12)
 plt.xlabel('Value',fontsize=12)
 plt.title('Decision threshold ($\it{a}$)',fontsize=14)
@@ -63,22 +63,22 @@ plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], font
 plt.savefig(op.join(outdir,'a_post2'),dpi=dpi)
 
 # z
-pm.plot_posterior_nodes2([z_PM, z_Fil], lb=0.1, ub=0.6,shade=False)
-plt.ylim(-0.05*60,60)
+pm.plot_posterior_nodes2([z_fixPM, z_freePM, z_fixFil, z_freeFil], lb=0.15, ub=0.60,shade=False)
+plt.ylim(-0.05*45,45)
 plt.ylabel('Density',fontsize=12)
 plt.xlabel('Value',fontsize=12)
 plt.title('Bias ($\it{z}$)', fontsize=14)
-plt.legend(['PM-cue','Filler'], fontsize=8, loc=0, edgecolor='white')
+plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
 #plt.tight_layout()
 plt.savefig(op.join(outdir,'z_post'),dpi=dpi)
 
 # t
-pm.plot_posterior_nodes2([t], lb=0.1, ub=0.5, shade=False)
+pm.plot_posterior_nodes2([t_fixPM, t_freePM, t_fixFil, t_freeFil], lb=0.2, ub=0.5, shade=False)
 plt.ylim(-0.05*50,50)
 plt.ylabel('Density',fontsize=12)
 plt.xlabel('Value',fontsize=12)
 plt.title('Non-decision time ($\it{t}$)',fontsize=14)
-plt.legend(['t'], fontsize=8, loc=0, edgecolor='white')
+plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=0, edgecolor='white')
 #plt.tight_layout()
 plt.savefig(op.join(outdir,'t_post'),dpi=dpi)
 
