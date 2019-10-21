@@ -80,12 +80,14 @@ mod2.plot_posterior_predictive()
 #models.append(mod1)
 #with open(op.join(outdir,'modelsGR1.pkl'),'wb') as fb:
 #    pickle.dump(models,fb)
+
+mod2 = hddm.load(op.join(outdir, 'ddm_model22'))
     
 models = []
 for i in range(3):
-    m = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type']})
+    m = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition'], 't':['type','volition']})
     m.find_starting_values()
-    m.sample(10000, burn=2000, dbname='traces21_'+str(i)+'.db', db='pickle')
+    m.sample(10000, burn=2000, dbname='traces22_'+str(i)+'.db', db='pickle')
     models.append(m)
 models.append(mod2)
 #
@@ -149,10 +151,10 @@ P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=0)
 P = pm.get_posteriorP(t_fixPM, t_fixFil, plot=0)
 
 # Free: PM vs. filler
-P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=0)
-P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=0)
-P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=0)
-P = pm.get_posteriorP(t_fixPM, t_fixFil, plot=0)
+P = pm.get_posteriorP(v_freePM, v_freeFil, plot=0)
+P = pm.get_posteriorP(a_freePM, a_freeFil, plot=0)
+P = pm.get_posteriorP(z_freePM, z_freeFil, plot=0)
+P = pm.get_posteriorP(t_freePM, t_freeFil, plot=0)
 
 # Get parameters and HPDI
 hpdi = 0.97
