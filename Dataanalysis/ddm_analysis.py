@@ -63,6 +63,11 @@ fhandler = open(op.join(outdir,"ddm_model22"),"wb")
 pickle.dump(mod2, fhandler)
 fhandler.close()
 
+# %% Model with only intercept on non-decision time
+mod3 = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
+mod3.find_starting_values()
+mod3.sample(10000, burn=2000, dbname='traces23.db', db='pickle')
+
 # %% Inspect posteriors
 mod1.plot_posteriors()
 mod2.plot_posteriors()
@@ -178,3 +183,5 @@ bnd = pm.get_hpdi(t_fixPM, hpdi)
 bnd = pm.get_hpdi(t_freePM, hpdi)
 bnd = pm.get_hpdi(t_fixFil, hpdi)
 bnd = pm.get_hpdi(t_freeFil, hpdi)
+
+#END
