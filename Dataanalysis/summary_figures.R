@@ -1,15 +1,19 @@
 ### ----------------------------------------------- ###
 ### Make summary plots of reaction time and %-correct
 
-out.folder <- '/home/mikkel/PM-volition/Datafiles/'
-setwd(out.folder)
-load('cln_data2.RData')
-source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
+# out.folder <- '/home/mikkel/PM-volition/Datafiles/'
+out.folder <- 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Datafiles'
 
+# source('/home/mikkel/PM-volition/Dataanalysis/publish_theme.vs2.R')
+source('C:\\Users\\Mikkel\\Documents\\PM-volition\\Dataanalysis\\publish_theme.vs2.R')
 library(ggplot2)
+
+setwd(out.folder)
 
 ########################### %-correct #################################
 ## Prepare data
+load('cln_data2.RData')
+
 tasks <-  c('Free (PM) ', 'Free (filler)', 'Fixed (PM)', 'Fixed (filler)')
 
 prob.dat <- data.frame()

@@ -26,27 +26,14 @@ x.data$valid.RT <- x.data$rt.ms < 2500 & x.data$rt.ms > 150
 
 for (sub in unique(x.data$subj)) {
   ntrials$orig[ntrials$sub==sub] <- length(x.data$rt.ms[x.data$subj==sub])
-  ntrials$good[ntrials$sub==sub] <- sum(x.data$valid.sd[x.data$subj==sub])
+  ntrials$good[ntrials$sub==sub] <- sum(x.data$valid.RT[x.data$subj==sub])
 }
-
-# # Remove (log-trans +/- 2sd; Ratcliff, 1993)
-# x.data$valid.sd <- logical(1)
-# for (sub in unique(x.data$subj)) {
-#   temp <- x.data$log.rt[x.data$subj==sub]
-#   cut <- c(mean(temp)-2*sd(temp), mean(temp)+3*sd(temp))
-#   good <- temp > cut[1] & temp < cut[2]
-#   x.data$valid.sd[x.data$subj==sub] <- good
-# 
-#   ntrials$orig[ntrials$sub==sub] <- length(temp)
-#   ntrials$good[ntrials$sub==sub] <- sum(good)
-# }
 
 summary(ntrials)
 summary(x.data)
 
 # Remove outliers
-# x.data.rtclip <- x.data[x.data$valid.sd == 1,] # Remove outliers (log-trans)
-x.data.rtclip <- x.data[x.data$valid.RT == 1,] # Remove outliers (RT)
+x.data.rtclip <- subset(x.data, valid.RT == 1)    # Remove outliers (RT)
 
 ### --------------------------------------------------------------------- ###
 ### Get summary of reaction time and %-correct (before removing bad subject)
@@ -66,7 +53,7 @@ for (jj in levels(x.data.rtclip$subj)){
   prob.dat <- rbind(prob.dat,SS)
 }
 
-#See bad subject performance
+# See bad subject performance
 subset(prob.dat, subj=='8')
 
 ## ---------------------------------------------------------------------- ##
@@ -75,6 +62,7 @@ subset(prob.dat, subj=='8')
 x.data.rtclip <- subset(x.data.rtclip, subj != '8')
 x.data.rtclip$subj <- droplevels(x.data.rtclip$subj)
 ntrials <- subset(ntrials, sub != '8')
+prob.dat <- subset(prob.dat, subj != '8')
 
 # N-tirals summary
 ntrials$removed <- ntrials$orig-ntrials$good
@@ -82,25 +70,9 @@ range(ntrials$good)
 median(ntrials$good)
 range(ntrials$removed)
 median(ntrials$removed)
-sum(x.data$valid.sd)
+sum(x.data$valid.RT)
 
-## %-correct
-tasks <-  c('Free (PM) ', 'Free (filler)', 'Fixed (PM)', 'Fixed (filler)')
-
-prob.dat <- data.frame()
-for (jj in levels(x.data.rtclip$subj)){
-  x.sub <- subset(x.data.rtclip, x.data.rtclip$subj==jj)
-  sub.tab.free <- prop.table(xtabs(~score+type,data=x.sub, subset=volition=='free'),2)
-  sub.tab.fix <- prop.table(xtabs(~score+type,data=x.sub, subset=volition=='fix'),2)
-  
-  subj <- rep(jj,4)
-  dat <- c(sub.tab.free[4],sub.tab.free[2],sub.tab.fix[4],sub.tab.fix[2])
-  SS <- data.frame(subj,tasks,dat)
-  
-  prob.dat <- rbind(prob.dat,SS)
-}
-
-# Group level summary
+## Summary of %-correct
 aggregate(dat~tasks, FUN=mean, data=prob.dat)
 aggregate(dat~tasks, FUN=range, data=prob.dat)
 
