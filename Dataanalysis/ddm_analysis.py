@@ -67,13 +67,25 @@ fhandler.close()
 mod3 = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
 mod3.find_starting_values()
 mod3.sample(10000, burn=2000, dbname='traces23.db', db='pickle')
+#mod3.save(op.join(outdir,"ddm_model23"))
+
+# save
+fhandler = open(op.join(outdir,"ddm_model23"),"wb")
+pickle.dump(mod3, fhandler)
+fhandler.close()
+
 
 # %% Inspect posteriors
 mod1.plot_posteriors()
 mod2.plot_posteriors()
+mod3.plot_posteriors()
 
 mod1.plot_posterior_predictive()
 mod2.plot_posterior_predictive()
+
+print('DIC model1 = ', mod1.dic)
+print('DIC model2 = ', mod2.dic)
+print('DIC model3 = ', mod3.dic)
 
 # %% Get R-hat [NB re-run due to save errors]
 #models = []
@@ -150,14 +162,14 @@ P = pm.get_posteriorP(z_fixFil, z_freeFil, plot=0)
 P = pm.get_posteriorP(t_fixFil, t_freeFil, plot=0)
 
 # Fixed: PM vs. Filler
-P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=0)
 P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=0)
+P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=0)
 P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=0)
 P = pm.get_posteriorP(t_fixPM, t_fixFil, plot=0)
 
 # Free: PM vs. filler
-P = pm.get_posteriorP(v_freePM, v_freeFil, plot=0)
 P = pm.get_posteriorP(a_freePM, a_freeFil, plot=0)
+P = pm.get_posteriorP(v_freePM, v_freeFil, plot=0)
 P = pm.get_posteriorP(z_freePM, z_freeFil, plot=0)
 P = pm.get_posteriorP(t_freePM, t_freeFil, plot=0)
 
