@@ -51,7 +51,7 @@ fhandler = open(op.join(outdir,"ddm_model21"),"wb")
 pickle.dump(mod1, fhandler)
 fhandler.close()
 
-# %% Fitr model with "volition" on all parameters
+# %% Fit model with "volition" on all parameters
 
 mod2 = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition'], 't':['type','volition']})
 mod2.find_starting_values()
@@ -107,8 +107,8 @@ for i in range(3):
     m.sample(10000, burn=2000, dbname='traces22_'+str(i)+'.db', db='pickle')
     models.append(m)
 models.append(mod2)
-#
 
+# save
 with open(op.join(outdir,'modelsGR2.pkl'),'wb') as fb:
     pickle.dump(models,fb)
 
@@ -119,7 +119,9 @@ with open(op.join(outdir,'modelsGR2.pkl'),'wb') as fb:
 #gelman_rubin(models) 
 #    
 with open(op.join(outdir,'modelsGR2.pkl'), 'rb') as f:
-    models = pickle.load(f)    
+    models = pickle.load(f)
+
+# Gelman-Rubin model diagnostics
 gelman_rubin(models) 
 
 # %% Load (/NOT WORKING)
