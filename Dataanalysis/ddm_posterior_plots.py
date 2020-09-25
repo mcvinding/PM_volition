@@ -235,3 +235,5 @@ plt.xlabel('Difference', fontsize=12)
 plt.title('Non-decision time ($\it{Filler}$ - $\it{PM}$)',fontsize=14)
 plt.tight_layout()
 plt.savefig(op.join(outdir,'t_freediff'),dpi=dpi)
+
+#END

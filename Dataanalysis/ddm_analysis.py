@@ -74,7 +74,6 @@ fhandler = open(op.join(outdir,"ddm_model23"),"wb")
 pickle.dump(mod3, fhandler)
 fhandler.close()
 
-
 # %% Inspect posteriors
 mod1.plot_posteriors()
 mod2.plot_posteriors()
@@ -87,7 +86,7 @@ print('DIC model1 = ', mod1.dic)
 print('DIC model2 = ', mod2.dic)
 print('DIC model3 = ', mod3.dic)
 
-# %% Get R-hat [NB re-run due to save errors]
+# %% Get R-hat
 #models = []
 #for i in range(3):
 #    m = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
@@ -98,6 +97,7 @@ print('DIC model3 = ', mod3.dic)
 #with open(op.join(outdir,'modelsGR1.pkl'),'wb') as fb:
 #    pickle.dump(models,fb)
 
+## MODEL 2 (full model)
 mod2 = hddm.load(op.join(outdir, 'ddm_model22'))
     
 models = []
@@ -123,6 +123,24 @@ with open(op.join(outdir,'modelsGR2.pkl'), 'rb') as f:
 
 # Gelman-Rubin model diagnostics
 gelman_rubin(models) 
+
+## MODEL 3
+mod3 = hddm.load(op.join(outdir, 'ddm_model23'))
+
+models3 = []
+for i in range(3):
+    m = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
+    m.find_starting_values()
+    m.sample(10000, burn=2000, dbname='traces23_'+str(i)+'.db', db='pickle')
+    models3.append(m)
+models.append(mod3)
+
+# save
+with open(op.join(outdir,'modelsGR3.pkl'),'wb') as fb:
+    pickle.dump(models,fb)
+
+gelman_rubin(models3)   
+    
 
 # %% Load (/NOT WORKING)
 chdir(outdir) #Must be in folder to load databases
@@ -197,5 +215,57 @@ bnd = pm.get_hpdi(t_fixPM, hpdi)
 bnd = pm.get_hpdi(t_freePM, hpdi)
 bnd = pm.get_hpdi(t_fixFil, hpdi)
 bnd = pm.get_hpdi(t_freeFil, hpdi)
+
+# %% SUMMARY MODEL 3
+# Get statistics from posterior
+stats = mod3.gen_stats()
+mod3.print_stats()
+mod3.get_group_nodes()
+
+# Generate posteriors
+v_fixPM, v_freePM, v_fixFil, v_freeFil  = mod3.nodes_db.node[['v(pm.fix)', 'v(pm.free)','v(filler.fix)','v(filler.free)']]
+a_fixPM, a_freePM, a_fixFil, a_freeFil  = mod3.nodes_db.node[['a(pm.fix)', 'a(pm.free)','a(filler.fix)','a(filler.free)']]
+z_fixPM, z_freePM, z_fixFil, z_freeFil  = mod3.nodes_db.node[['z(pm.fix)', 'z(pm.free)','z(filler.fix)','z(filler.free)']]
+t_int  = mod3.nodes_db.node['t']
+
+# PM trials: Fix vs Free
+P = pm.get_posteriorP(a_fixPM, a_freePM, plot=1)
+P = pm.get_posteriorP(v_fixPM, v_freePM, plot=1)
+P = pm.get_posteriorP(z_fixPM, z_freePM, plot=1)
+
+# Filler trials: Fix vs Free
+P = pm.get_posteriorP(a_fixFil, a_freeFil, plot=1)
+P = pm.get_posteriorP(v_fixFil, v_freeFil, plot=1)
+P = pm.get_posteriorP(z_fixFil, z_freeFil, plot=1)
+
+# Fixed: PM vs. Filler
+P = pm.get_posteriorP(a_fixPM, a_fixFil, plot=1)
+P = pm.get_posteriorP(v_fixPM, v_fixFil, plot=1)
+P = pm.get_posteriorP(z_fixPM, z_fixFil, plot=1)
+
+# Free: PM vs. filler
+P = pm.get_posteriorP(a_freePM, a_freeFil, plot=1)
+P = pm.get_posteriorP(v_freePM, v_freeFil, plot=1)
+P = pm.get_posteriorP(z_freePM, z_freeFil, plot=1)
+ 
+# Get parameters and HPDI
+hpdi = 0.97
+
+bnd = pm.get_hpdi(a_fixPM, hpdi)
+bnd = pm.get_hpdi(a_freePM, hpdi)
+bnd = pm.get_hpdi(a_fixFil, hpdi)
+bnd = pm.get_hpdi(a_freeFil, hpdi)
+
+bnd = pm.get_hpdi(v_fixPM, hpdi)
+bnd = pm.get_hpdi(v_freePM, hpdi)
+bnd = pm.get_hpdi(v_fixFil, hpdi)
+bnd = pm.get_hpdi(v_freeFil, hpdi)
+
+bnd = pm.get_hpdi(z_fixPM, hpdi)
+bnd = pm.get_hpdi(z_freePM, hpdi)
+bnd = pm.get_hpdi(z_fixFil, hpdi)
+bnd = pm.get_hpdi(z_freeFil, hpdi)
+
+bnd = pm.get_hpdi(t_int, hpdi)
 
 #END
