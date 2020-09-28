@@ -112,12 +112,7 @@ models.append(mod2)
 with open(op.join(outdir,'modelsGR2.pkl'),'wb') as fb:
     pickle.dump(models,fb)
 
-## Re-load    
-# Gelman-Rubin R-hat    
-#with open(op.join(outdir,'modelsGR1.pkl'), 'rb') as f:
-#    models = pickle.load(f)  
-#gelman_rubin(models) 
-#    
+# Re-load
 with open(op.join(outdir,'modelsGR2.pkl'), 'rb') as f:
     models = pickle.load(f)
 
@@ -133,14 +128,13 @@ for i in range(3):
     m.find_starting_values()
     m.sample(10000, burn=2000, dbname='traces23_'+str(i)+'.db', db='pickle')
     models3.append(m)
-models.append(mod3)
+models3.append(mod3)
 
 # save
 with open(op.join(outdir,'modelsGR3.pkl'),'wb') as fb:
-    pickle.dump(models,fb)
+    pickle.dump(models3,fb)
 
-gelman_rubin(models3)   
-    
+gelman_rubin(models3)
 
 # %% Load (/NOT WORKING)
 chdir(outdir) #Must be in folder to load databases
