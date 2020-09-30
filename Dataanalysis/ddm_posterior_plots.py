@@ -1,26 +1,27 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Plot posterior od DDM. Created on Sat Dec  8 11:50:04 2018.
+Plot posterior od DDM. Created on Sat Dec 8 11:50:04 2018.
 @author: mcvinding
 """
-import matplotlib
-#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import hddm
-import pickle
+#import pickle
 from os import chdir
 import os.path as op
 import sys
 
-workdir = '/home/mikkel/PM-volition/Dataanalysis'
-outdir = '/home/mikkel/PM-volition/Datafiles'
+#workdir = '/home/mikkel/PM-volition/Dataanalysis'
+#outdir = '/home/mikkel/PM-volition/Datafiles'
 
 workdir = 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Dataanalysis'
 outdir = 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Datafiles'
 
 sys.path.append(workdir)
 import PM_volition_utilfun as pm # plot_posterior_diff, plot_posterior_nodes2, get_posteriorP
+
+# %% Plot options
+dpi=600
 
 # %% Load model
 chdir(outdir)                   #Must be in folder to load databases
@@ -29,7 +30,7 @@ mod = hddm.load(op.join(outdir, 'ddm_model22'))
 #f = open(op.join(outdir,"ddm_model22"),"rb")
 #mod = pickle.load(f)
 
-# %% Generate posteriors
+#%% Generate posteriors
 v_fixPM, v_freePM, v_fixFil, v_freeFil  = mod.nodes_db.node[['v(pm.fix)', 'v(pm.free)','v(filler.fix)','v(filler.free)']]
 a_fixPM, a_freePM, a_fixFil, a_freeFil  = mod.nodes_db.node[['a(pm.fix)', 'a(pm.free)','a(filler.fix)','a(filler.free)']]
 z_fixPM, z_freePM, z_fixFil, z_freeFil  = mod.nodes_db.node[['z(pm.fix)', 'z(pm.free)','z(filler.fix)','z(filler.free)']]
@@ -60,8 +61,6 @@ _, z_freediff = pm.get_posteriorP(z_freeFil, z_freePM, plot=0)
 _, t_freediff = pm.get_posteriorP(t_freeFil, t_freePM, plot=0)
 
 # %% Posterior plots
-dpi=600
-
 # v
 pm.plot_posterior_nodes2([v_fixPM, v_freePM, v_fixFil, v_freeFil],lb=2.0, ub=4.0,shade=False)
 plt.ylim(-0.05*6,6)
@@ -185,7 +184,7 @@ plt.ylabel('Density', fontsize=12)
 plt.xlabel('Difference', fontsize=12)
 plt.title('Drift rate ($\it{v}$)',fontsize=14)
 plt.tight_layout()
-plt.savefig(op.join(outdir,'v_dixdiff'),dpi=dpi)
+plt.savefig(op.join(outdir,'v_fixdiff'),dpi=dpi)
 
 pm.plot_posterior_diff(z_fixdiff)
 plt.ylim(-0.05*30, 30)
@@ -218,7 +217,7 @@ plt.ylabel('Density', fontsize=12)
 plt.xlabel('Difference', fontsize=12)
 plt.title('Drift rate ($\it{v}$)',fontsize=14)
 plt.tight_layout()
-plt.savefig(op.join(outdir,'v_dixdiff'),dpi=dpi)
+plt.savefig(op.join(outdir,'v_freediff'),dpi=dpi)
 
 pm.plot_posterior_diff(z_freediff)
 plt.ylim(-0.05*30, 30)
@@ -235,5 +234,8 @@ plt.xlabel('Difference', fontsize=12)
 plt.title('Non-decision time ($\it{t}$)',fontsize=14)
 plt.tight_layout()
 plt.savefig(op.join(outdir,'t_freediff'),dpi=dpi)
+
+#%%
+plt.close('all')
 
 #END
