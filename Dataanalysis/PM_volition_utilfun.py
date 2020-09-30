@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 25 09:47:59 2018
-@author: mikkel
+Created on Sun Nov 25 09:47:59 2018.
+@author: mcvinding
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,7 +17,7 @@ def get_posteriorP(x,y,plot=0):
     if P > 0.5:
         P = 1-P        
     P = P*2     #Two-tailed        
-    print ": v P(x-y = 0) = ", P
+    print("P(x-y = 0) = ", P)
     if plot:
         plot_posterior_diff(diff)        
     return P, diff

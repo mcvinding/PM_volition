@@ -6,10 +6,12 @@ out.folder <- '/home/mikkel/PM-volition/Datafiles/'
 setwd(out.folder)
 load(file='raw_data.RData')
 
-age.data <- aggregate(age~subj,FUN=mean,data=x.data.rtclip)
-sex.data <- aggregate(gender~subj,FUN=unique,data=x.data.rtclip)
-sub.data = merge(age.data,sex.data,by='subj')
+# Arrange data
+age.data <- aggregate(age~subj, FUN=mean, data=x.data.rtclip)
+sex.data <- aggregate(gender~subj, FUN=unique, data=x.data.rtclip)
+sub.data = merge(age.data, sex.data, by='subj')
 
+# Summaries
 summary(sub.data)
 mean(sub.data$age)
 median(sub.data$age)
