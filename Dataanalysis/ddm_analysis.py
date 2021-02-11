@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from kabuki.analyze import gelman_rubin
 import pickle
 
-workdir = '/home/mikkel/PM-volition/Dataanalysis'
-outdir = '/home/mikkel/PM-volition/Datafiles'
+#workdir = '/home/mikkel/PM-volition/Dataanalysis'
+#outdir = '/home/mikkel/PM-volition/Datafiles'
 
 workdir = 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Dataanalysis'
 outdir = 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Datafiles'
@@ -41,13 +41,13 @@ for i, subj_data in data_flip.groupby('subj_idx'):
     subj_data.rt.hist(bins=100, histtype='step', ax=ax)
 
 # %% Fit the real model (NB: Takes hours!)
-mod1 = hddm.HDDM(data, include='z', depends_on ={'v': ['volition'], 'a':['volition'], 'z':['volition']})
+mod1 = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['volition'], 'z':['volition']})
 mod1.find_starting_values()
-mod1.sample(10000, burn=2000, dbname='traces21.db', db='pickle')
+mod1.sample(10000, burn=2000, dbname='traces31.db', db='pickle')
 #mod1.save(op.join(outdir,'ddm_model21'))  # ERROR
 
 # save
-fhandler = open(op.join(outdir,"ddm_model21"),"wb")
+fhandler = open(op.join(outdir,"ddm_model31"),"wb")
 pickle.dump(mod1, fhandler)
 fhandler.close()
 
