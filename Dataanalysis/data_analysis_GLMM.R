@@ -3,9 +3,10 @@
 rm(list=ls())
 
 #Set up foldersd  
-out.folder <- '/home/mikkel/PM-volition/Datafiles/'
+# out.folder <- '/home/mikkel/PM-volition/Datafiles/'
+out.folder <- 'C:\\Users\\Mikkel\\Documents\\PM-volition\\Datafiles'
 setwd(out.folder)
-load(file='cln_data.RData')
+load(file='cln_data2.RData')
 
 #Libraries
 library(brms)
@@ -41,7 +42,7 @@ hdi(mhit.mot.3, prob = c(0.67, 0.89, 0.97), type="fixed")
 # equi_test(mhit.mot.3, out = "plot", type = "fixed", rope=c(-.20,.20))  #ROPE makes no sense here
 
 # Bayes Factors
-bf.type <- bayes_factor(mhit.mot.1, mhit.mot.0)
+bf.type <- bayes_factor(mhit.mot.1, mhit.mot.0, log=FALSE)
 bf.voli <- bayes_factor(mhit.mot.2, mhit.mot.1)
 bf.int2 <- bayes_factor(mhit.mot.3, mhit.mot.2)
 bf.int1 <- bayes_factor(mhit.mot.3, mhit.mot.1)
@@ -60,13 +61,15 @@ stanplot(mhit.mot.3, type="dens_overlay")+publish_theme
 
 ### --------------------------------------------------------------------------------- ###
 ### OLD: Use glmer and compare using BIC (cf. Wagenmakers 2007)
-mhit.mot.3 <- glmer(score~type*volition + (1|subj) + (1|color) + (1|shape),
-                      data = x.data.rtclip,family = 'binomial')
-mhit.mot.2 <- update(mhit.mot.xxx, ~. -type:volition)
-mhit.mot.1 <- update(mhit.mot.2, ~. -volition)
-mhit.mot.0 <- update(mhit.mot.1, ~. -type)
+library(lme4)
 
-anova(mhit.mot.xxx,mhit.mot.2,mhit.mot.1,mhit.mot.0)
+mhit.mod.3 <- glmer(score~type*volition + (type*volition|subj) + (1|color) + (1|shape),
+                     data = x.data.rtclip, family = 'binomial')
+mhit.mod.2 <- update(mhit.mod.3, ~. -type:volition)
+mhit.mod.1 <- update(mhit.mod.2, ~. -volition)
+mhit.mod.0 <- update(mhit.mod.1, ~. -type)
+
+anova(mhit.mot.3,  mhit.mot.2, mhit.mot.1, mhit.mot.0)
 
 # Bayes factors from BIC (?)
 bfBIC.type <- exp((BIC(mhit.mot.0) - BIC(mhit.mot.1))/2)
@@ -78,16 +81,19 @@ bfBIC.vol
 bfBIC.xx <- exp((BIC(mhit.mot.1) - BIC(mhit.mot.3))/2)
 bfBIC.xx
 
-# Save everything...
-setwd(out.folder)
-save.image("Workspace.RData")
+############################################################
+################ RT (all data) ####   ####################
+############################################################
+
+mrt.mod.3 <- lmer(rt.ms~type*volition + (1|subj) + (1|color) + (1|shape),
+                  data = x.data.rtclip, REML=FALSE)
+mrt.mod.2 <- update(mrt.mod.3, ~. -type:volition)
+mrt.mod.1 <- update(mrt.mod.2, ~. -volition)
+mrt.mod.0 <- update(mrt.mod.1, ~. -type)
+
+anova(mrt.mod.3, mrt.mod.2, mrt.mod.1, mrt.mod.0)
 
 ############################################################################################################
 
-setwd(out.folder)
-save.image("Workspace.RData")
-
-
-
-
-
+# setwd(out.folder)
+# save.image("Workspace.RData")

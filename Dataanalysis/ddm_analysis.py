@@ -41,7 +41,7 @@ for i, subj_data in data_flip.groupby('subj_idx'):
     subj_data.rt.hist(bins=100, histtype='step', ax=ax)
 
 # %% Fit the real model (NB: Takes hours!)
-mod1 = hddm.HDDM(data, bias=False, depends_on ={'v': ['type','volition'], 'a':['volition'], 'z':['volition']})
+mod1 = hddm.HDDM(data, bias=False, depends_on ={'v': ['type','volition'], 'a':['volition']})
 mod1.find_starting_values()
 mod1.sample(10000, burn=2000, dbname='traces31.db', db='pickle')
 #mod1.save(op.join(outdir,'ddm_model21'))  # ERROR
@@ -63,27 +63,27 @@ fhandler.close()
 #fhandler.close()
 
 # %% Model with only intercept on non-decision time
-#mod3 = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['type','volition'], 'z':['type','volition']})
-#mod3.find_starting_values()
-#mod3.sample(10000, burn=2000, dbname='traces23.db', db='pickle')
-##mod3.save(op.join(outdir,"ddm_model23"))
+mod3 = hddm.HDDM(data, bias=False, depends_on ={'v': ['type','volition'], 'a':['type','volition']})
+mod3.find_starting_values()
+mod3.sample(10000, burn=2000, dbname='traces23.db', db='pickle')
+mod3.save(op.join(outdir,"ddm_model33"))
 #
 ## save
-#fhandler = open(op.join(outdir,"ddm_model23"),"wb")
-#pickle.dump(mod3, fhandler)
-#fhandler.close()
+fhandler = open(op.join(outdir,"ddm_model23"),"wb")
+pickle.dump(mod3, fhandler)
+fhandler.close()
 
 # %% Inspect posteriors
-mod1.plot_posteriors()
-mod2.plot_posteriors()
-mod3.plot_posteriors()
-
-mod1.plot_posterior_predictive()
-mod2.plot_posterior_predictive()
-
-print('DIC model1 = ', mod1.dic)
-print('DIC model2 = ', mod2.dic)
-print('DIC model3 = ', mod3.dic)
+#mod1.plot_posteriors()
+#mod2.plot_posteriors()
+#mod3.plot_posteriors()
+#
+#mod1.plot_posterior_predictive()
+#mod2.plot_posterior_predictive()
+#
+#print('DIC model1 = ', mod1.dic)
+#print('DIC model2 = ', mod2.dic)
+#print('DIC model3 = ', mod3.dic)
 
 # %% Get R-hat
 #models = []
@@ -101,7 +101,7 @@ mod = hddm.load(op.join(outdir, 'ddm_model31'))
     
 models = []
 for i in range(3):
-    m = hddm.HDDM(data, include='z', depends_on ={'v': ['type','volition'], 'a':['volition'], 'z':['volition']})
+    m = hddm.HDDM(data, bias=False, depends_on ={'v': ['type','volition'], 'a':['volition']})
     m.find_starting_values()
     m.sample(10000, burn=2000, dbname='traces31_'+str(i)+'.db', db='pickle')
     models.append(m)
@@ -140,11 +140,16 @@ chdir(outdir) #Must be in folder to load databases
 #mod1 = hddm.load(op.join(outdir, 'ddm_model21'))
 mod = hddm.load(op.join(outdir, 'ddm_model31'))
 
-# %% Summary and plots
+# %% Model diagnostics
 # Compare DIC (not useful)
 print('DIC model1 = ', mod.dic)
 #print('DIC model2 = ', mod.dic)
 
+ppc_data = hddm.utils.post_pred_gen(mod)
+ppc_compare = hddm.utils.post_pred_stats(data, ppc_data)
+ppc_stats = hddm.utils.post_pred_stats(data, ppc_data, call_compare=False)
+
+#%% Summary and plots
 # Get statistics from posterior
 stats = mod.gen_stats()
 mod.print_stats()

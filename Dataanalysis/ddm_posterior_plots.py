@@ -4,7 +4,10 @@
 Plot posterior od DDM. Created on Sat Dec 8 11:50:04 2018.
 @author: mcvinding
 """
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+%matplotlib qt
 import hddm
 #import pickle
 from os import chdir
@@ -68,7 +71,7 @@ plt.ylim(-0.05*7, 7)
 plt.ylabel('Density',fontsize=12)
 plt.xlabel('Value',fontsize=12)
 plt.title('Drift rate ($\it{v}$)',fontsize=14)
-plt.legend(['PM-cue: Fixed','PM-cue: Free','Filler: Fixed','Filler: Free'], fontsize=8, loc=2, edgecolor='white')
+plt.legend(['PM-cue: No-choice','PM-cue: Choice','Filler: No-choice','Filler: Choice'], fontsize=8, loc='best', edgecolor='white')
 #plt.tight_layout()
 plt.savefig(op.join(outdir,'v_post2'), dpi=dpi)
 
@@ -78,7 +81,7 @@ plt.ylim(-0.05*8, 8)
 plt.ylabel('Density',fontsize=12)
 plt.xlabel('Value',fontsize=12)
 plt.title('Boundary separation ($\it{a}$)',fontsize=14)
-plt.legend(['Fixed','Free'], fontsize=8, loc=2, edgecolor='white')
+plt.legend(['No-choice','Choice'], fontsize=8, loc=2, edgecolor='white')
 #plt.tight_layout()
 plt.savefig(op.join(outdir,'a_post2'), dpi=dpi)
 

@@ -14,7 +14,7 @@ setwd(out.folder)
 ## Prepare data
 load('cln_data2.RData')
 
-tasks <-  c('Free (PM) ', 'Free (filler)', 'Fixed (PM)', 'Fixed (filler)')
+tasks <-  c('Choice (PM) ', 'Choice (filler)', 'No-choice (PM)', 'No-choice (filler)')
 
 prob.dat <- data.frame()
 for (jj in levels(x.data.rtclip$subj)){
@@ -52,7 +52,9 @@ pct_corrt = ggplot(prob.dat, aes(x=tasks,y=dat, fill=subj))+
   ylab("%-correct")+
   xlab('Task')+ylim(c(.5, 1))+
   labs(title="Performance", tag="B") + guides(fill=F)+
-  publish_theme + theme(legend.position = "none")
+  publish_theme + 
+  theme(legend.position = "none",
+        axis.text.x = element_text(size=9))
 pct_corrt
 ggsave('pct_correct_all.png', pct_corrt,
        device='png',width=4,height=4, units='cm', dpi = 600, scale = 3.5)
@@ -84,7 +86,9 @@ rt_plt <- ggplot(rt.dat,aes(x=tasks, y=RT, fill=subj)) +
   ylab("Reaction time (ms)") + ylim(200, 900)+
   ggtitle("Reaction time")+
   labs(title="Reaction time", tag="A") + guides(fill=F)+
-  publish_theme + theme(legend.position = "none")
+  publish_theme +
+  theme(legend.position = "none",
+        axis.text.x = element_text(size=9))
 rt_plt
 ggsave('rt_all.png', rt_plt,
        device='png',width=4,height=4, units='cm', dpi = 600, scale = 3.5)
