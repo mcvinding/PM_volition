@@ -9,6 +9,8 @@ import numpy as np
 #import hddm
 from scipy.stats import gaussian_kde
 import pymc as pc  
+import kabuki
+import os.path as op
 
 
 def get_posteriorP(x,y,plot=0):
@@ -86,3 +88,5 @@ def plot_posterior_diff(diff, bins=100, lb=None, ub=None, shade=True):
     if shade:
         plt.fill_between(xs,dens(xs),0, alpha=0.2,color='b')
     plt.hlines(0,hpdi[0],hpdi[1],lw=5,color='k',linestyles='-')
+
+#END
