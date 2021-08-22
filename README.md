@@ -4,7 +4,8 @@ The repository contains scripts for data analysis, the experimental paradigm, an
 
 For more information about the study please refer to the published paper:
 
-**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2021). Volition in prospective Memory: Evidence against differences between free and fixed target events. *Consciousness and Cognition, 94*. https://doi.org/10.1016/j.concog.2021.103175.Volition**
+**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2021). Volition in prospective Memory: Evidence against differences between free and fixed target events. *Consciousness and Cognition, 94*. https://doi.org/10.1016/j.concog.2021.103175.**
+
 ## Content
 
 The folder *Dataanlysis* contains script in *R* and *Python* to analyse data exactly as described in our paper. The main anlysis used the [HDDM](http://ski.clps.brown.edu/hddm_docs/) package for Python (3.5).
@@ -19,7 +20,7 @@ The file _pm-volition demo.ogv_ is a short video illustrating the behavioural ta
 
 All data analysis scripts are freely available for use and redistribution. If you want to use the experimental paradigm or data files you must agree to, and follow the following conditions:
 
-1. When using the experimental paradigm or data files you must refer to the publication (*Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2020). Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions. PsyArXiv.org, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)*, or later versions).
+1. When using the experimental paradigm or data files you must refer to the publication (*Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2021). Volition in prospective Memory: Evidence against differences between free and fixed target events. *Consciousness and Cognition, 94*. https://doi.org/10.1016/j.concog.2021.103175.*, or later versions).
 
 2. Comply with all relevant rules and regulations imposed by my institution and my government. This may mean that you need your research to be approved or declared exempt by a committee that oversees research on human subjects, e.g. by a Institutional Review Board or Ethics Committee.
 
