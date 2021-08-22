@@ -2,10 +2,9 @@
 
 The repository contains scripts for data analysis, the experimental paradigm, and data files for our behavioural study on the effect of volition in prospective memory. Please read this document about what you find in this folder and permission on how to use the content.
 
-For more information about the study please see our forthcoming paper:
+For more information about the study please refer to the published paper:
 
-**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2020). *Volition in Prospective Memory: Evidence Against Differences in Recalling Free and Fixed Delayed intentions*. PsyArXiv, [https://doi.org/10.31234/osf.io/hsrbt](https://doi.org/10.31234/osf.io/hsrbt)**
-
+**Vinding, M. C., Lindeløv, J. K., Xiao, Y., Chan, R. C. K., & Sørensen, T. A. (2021). Volition in prospective Memory: Evidence against differences between free and fixed target events. *Consciousness and Cognition, 94*. https://doi.org/10.1016/j.concog.2021.103175.Volition**
 ## Content
 
 The folder *Dataanlysis* contains script in *R* and *Python* to analyse data exactly as described in our paper. The main anlysis used the [HDDM](http://ski.clps.brown.edu/hddm_docs/) package for Python (3.5).
